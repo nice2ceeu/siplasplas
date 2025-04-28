@@ -1,0 +1,5 @@
+1 monitor 2 10 kristoffer 2025-04-28 2025-04-28
+6 mangga 12 10 kristoffer 2025-04-28 2025-04-28
+5 a4-bondpaper 20 10 kristoffer 2025-04-27 2025-04-28
+1 paper 10 3 isra 2025-04-28 2025-04-28
+3 monitor 5 3 isra 2025-04-28 2025-04-28
