@@ -1,7 +1,0 @@
-1 paper 20
-2 pencil 50
-3 monitor 5
-4 eraser 10
-5 a4-bondpaper 420
-6 mangga 38
-7 laptop 10
