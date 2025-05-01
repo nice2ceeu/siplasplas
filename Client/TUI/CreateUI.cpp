@@ -6,43 +6,35 @@
 #include <windows.h>
 #include <cctype>
 #include <algorithm>
-#include <cctype>
 #include <limits>
 #include <regex>
 #include <cmath>
+#include "uix.h"
+#include "../ANSI_COLOR/Color.h"
 
 // NAMESPACES
 using namespace std;
+using namespace Color;
 
-// UIX FUNCTION
-void print(const string &text, const int rm_space = 0, const string color = "\e[0m");
-void print_error(const string &text, const int rm_space = 0);
-void print_line(const char symbol = '_', const string &color = "\e[1;30m");
-void print_gradient(const string &text, const int &color_start, const int &color_end, bool background = false);
-string centered_str(const string &text, const int rm_space = 0);
-string print_line_str(const char symbol);
-string convert_case(const string &subject, const string &option = "");
-int viewport_width();
-    
 // GLOBAL VARIABLE
-int term_width = viewport_width(); 
+int term_width = 80; 
 int term_height = 20;
+
+
+// CONFIGURATION PURPOSES
+int main() {
+    print("Sample Center\n", -10, Color::red);
+    print_line();
+    print_error("ERROR!\n");
+    print_gradient("HELLO THERE EVERYONE\n");
+    print(convert_case("ThIS wIll BE FiX\n"));
+}
+
 
 //? ________________________________ FUNCTION  ________________________________ 
 
-// RETURN TERMINAL WIDTH
-int viewport_width(){
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    int columns;
-
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-    columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-
-    return columns;
-}
-
 // CENTER ALL TEXT
-void print(const string &text, const int rm_space, const string color){ 
+void print(const string &text, const int side, const string color){ 
     string fulltext = text;
 
     int effective_length = 0; 
@@ -53,7 +45,7 @@ void print(const string &text, const int rm_space, const string color){
         effective_length += 1; 
     } 
 
-    int spaces = ((term_width - effective_length) / 2) - rm_space; 
+    int spaces = ((term_width - effective_length) / 2) + side; 
     cout << string(spaces, ' ') << color << fulltext << "\e[0m";
 }
 
@@ -78,7 +70,7 @@ void print_line(const char symbol, const string &color){
     cout << color << string(term_width, symbol) << "\n\e[0m" << endl;
 }
 
-// ADD A GRADIENT COLORED LINE
+// ADD A GRADIENT TEXT
 void print_gradient(const string &text, const int &color_start, const int &color_end, bool background) {
     int color_range = color_end - color_start;
     int text_length = text.length();
@@ -92,7 +84,9 @@ void print_gradient(const string &text, const int &color_start, const int &color
         }
     }
     cout << "\033[0m"; // Reset color
+
 }
+
 
 // RETURN A CENTERED STRING
 string centered_str(const string &text, const int rm_space){ 
@@ -111,7 +105,7 @@ string centered_str(const string &text, const int rm_space){
 }
 
 // RETURN A LINE STRING FOR MODIFICATION
-string print_line_str(const char symbol){
+string line_str(const char symbol){
     return string(term_width, symbol);
 }
 

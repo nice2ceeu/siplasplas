@@ -1,0 +1,3 @@
+cd "c:\Users\KC Sean\Desktop\PROJECTS\Github Project\Collaborator\siplasplas\Client\TUI\Test"
+g++ CreateUI.cpp -o SupplySync.exe
+SupplySync.exe
