@@ -23,7 +23,7 @@ int term_height = 20;
 
 // CONFIGURATION PURPOSES
 int main() {
-    print("Sample Center\n", -10, Color::red);
+    print("Sample Center\n", 0, Color::red);
     print_line();
     print_error("ERROR!\n");
     print_gradient("HELLO THERE EVERYONE\n");
@@ -50,7 +50,7 @@ void print(const string &text, const int side, const string color){
 }
 
 // ERROR PANEL
-void print_error(const string &text, const int rm_space){
+void print_error(const string &text, const int side){
     string fulltext = text;
 
     int effective_length = 0; 
@@ -61,7 +61,7 @@ void print_error(const string &text, const int rm_space){
         effective_length += 1; 
     } 
 
-    int spaces = ((term_width - effective_length) / 2) - rm_space; 
+    int spaces = ((term_width - effective_length) / 2) + side; 
     cout << string(spaces, ' ') << "\x1B[31m" << fulltext << "\e[0m";
 }
 
@@ -71,10 +71,26 @@ void print_line(const char symbol, const string &color){
 }
 
 // ADD A GRADIENT TEXT
-void print_gradient(const string &text, const int &color_start, const int &color_end, bool background) {
+void print_gradient(const string &text, const int &color_start, const int &color_end, bool background, const int side) {
     int color_range = color_end - color_start;
     int text_length = text.length();
 
+    // Calculate the effective length (ignore escape codes for centering)
+    int effective_length = 0;
+    for (char ch : text) {
+        if (ch == '\n' || ch == '\t') {
+            continue;
+        }
+        effective_length += 1;
+    }
+
+    // Calculate the spaces to center the text
+    int spaces = ((term_width - effective_length) / 2) + side;
+    
+    // Print leading spaces
+    cout << string(spaces, ' ');
+
+    // Print the gradient text with colors
     for (int i = 0; i < text_length; ++i) {
         int color_code = color_start + (color_range * i / text_length);
         if (background) {
@@ -83,13 +99,15 @@ void print_gradient(const string &text, const int &color_start, const int &color
             cout << "\033[38;5;" << color_code << "m" << text[i];
         }
     }
-    cout << "\033[0m"; // Reset color
-
+    
+    // Reset color at the end
+    cout << "\033[0m"; 
 }
 
 
+
 // RETURN A CENTERED STRING
-string centered_str(const string &text, const int rm_space){ 
+string centered_str(const string &text, const int side){ 
     string fulltext = text;
 
     int effective_length = 0; 
@@ -100,7 +118,7 @@ string centered_str(const string &text, const int rm_space){
         effective_length += 1; 
     } 
 
-    int spaces = ((term_width - effective_length) / 2) - rm_space; 
+    int spaces = ((term_width - effective_length) / 2) + side; 
     return string(spaces, ' ') + fulltext;
 }
 
