@@ -10,7 +10,7 @@
 #include <regex>
 #include <cmath>
 #include "uix.h"
-#include "../ANSI_COLOR/Color.h"
+#include "../Headers/Color.h"
 
 // NAMESPACES
 using namespace std;
@@ -22,14 +22,16 @@ int term_height = 20;
 
 
 // CONFIGURATION PURPOSES
-int main() {
+int main1() {
+    // UI INITIAL TEST
     print("Sample Center\n", 0, Color::red);
     print_line();
     print_error("ERROR!\n");
     print_gradient("HELLO THERE EVERYONE\n");
     print(convert_case("ThIS wIll BE FiX\n"));
-}
 
+    return 0;
+}
 
 //? ________________________________ FUNCTION  ________________________________ 
 

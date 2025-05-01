@@ -370,13 +370,10 @@ void approveRequest(int idToBorrow) {
         if (req.reqId == idToBorrow) {
             found = true;
 
-            
             vector<Item> items;
-            bool itemFound = false;
 
             while (inFile2 >> item.id >> item.name >> item.quantity) {
                 if (item.id == req.itemId) {
-                    itemFound = true;
                     if (req.itemQuan > item.quantity) {
                         cout << "Insufficient stocks.\n";
                         insufficientStock = true;
@@ -850,7 +847,6 @@ void adminDashboard(int id,string name ,string username, string department, stri
     int action;
     int action2;
 	int approveId;
-	int rejectId;
     int choice = -1;  // Initializings
     int deleteId;
     int returnId;

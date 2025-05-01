@@ -1,3 +1,13 @@
-cd "c:\Users\KC Sean\Desktop\PROJECTS\Github Project\Collaborator\siplasplas\Client\TUI\Test"
-g++ CreateUI.cpp -o SupplySync.exe
-SupplySync.exe
+// Compile All Modules
+
+make
+
+
+// Delete Build
+
+make clean
+
+
+// Run App (Compile if you havent)
+
+./SupplySync
