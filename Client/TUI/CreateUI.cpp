@@ -35,6 +35,46 @@ int main1() {
 
 //? ________________________________ FUNCTION  ________________________________ 
 
+// Line with Text
+void line_title(const string text, const char symbol, const string line_color, const string text_color){
+    string decorated_text = "  " + text + "  ";  // Text with padding
+    int text_length = decorated_text.length();
+    int line_length = term_width;
+
+    // Calculate how many symbols go on each side
+    int remaining = line_length - text_length;
+    if (remaining < 0) remaining = 0;
+
+    int left_len = remaining / 2;
+    int right_len = remaining - left_len;
+
+    // Create the left and right parts of the line
+    string left = string(left_len, symbol);
+    string right = string(right_len, symbol);
+
+    // Combine and print with colors
+    cout << line_color << left << text_color << decorated_text << line_color << right << "\033[0m" << endl;
+}
+
+// Add Endline
+void space(const int count){
+    for(int i = 0; i < count; i++){
+        cout << "\n";
+    }
+}
+
+// TERMINAL SIZE
+void set_terminal_size(){
+
+    ostringstream console;
+    console << "mode con: cols=" << term_width << " lines=" <<term_height;
+    string command = console.str();
+
+    system(command.c_str());
+
+    return;
+}
+
 // CENTER ALL TEXT
 void print(const string &text, const int side, const string color){ 
     string fulltext = text;
@@ -48,8 +88,49 @@ void print(const string &text, const int side, const string color){
     } 
 
     int spaces = ((term_width - effective_length) / 2) + side; 
-    cout << string(spaces, ' ') << color << fulltext << "\e[0m";
+    cout << string(max(0, spaces), ' ') << color << fulltext << (color.empty() ? "" : "\033[0m");
 }
+
+// Print to Side
+void print_right(const string &text, const int side, const string color) {
+    string fulltext = text;
+
+    int effective_length = 0; 
+    for (char ch : fulltext) { 
+        if (ch == '\n' || ch == '\t') continue; 
+        effective_length += 1; 
+    } 
+
+    // Quarter-width centering (right side)
+    int quarter_width = term_width / 2;
+    int spaces = ((quarter_width - effective_length) / 2) + side + quarter_width;
+
+    cout << string(max(0, spaces), ' ') << color << fulltext << (color.empty() ? "" : "\033[0m");
+}
+
+void print_left(const string &text, const int side, const string color) {
+    // Move cursor up 1 line and to column 1 (start of line)
+    cout << "\033[1A\r" << flush;
+
+    // Calculate effective text length (skip \n, \t)
+    int effective_length = 0;
+    for (char ch : text) {
+        if (ch != '\n' && ch != '\t') effective_length++;
+    }
+
+    int half_width = term_width / 2;
+    int spaces = ((half_width - effective_length) / 2) + side;
+
+    // Pad right side to clear leftovers in left half
+    int total_fill = half_width;
+
+    string output = string(max(0, spaces), ' ') + color + text + (color.empty() ? "" : "\033[0m");
+    int fill = max(0, (int)total_fill - (int)output.length());
+    output += string(fill, ' ');
+
+    cout << output << flush;
+}
+
 
 // ERROR PANEL
 void print_error(const string &text, const int side){
@@ -105,7 +186,6 @@ void print_gradient(const string &text, const int &color_start, const int &color
     // Reset color at the end
     cout << "\033[0m"; 
 }
-
 
 
 // RETURN A CENTERED STRING

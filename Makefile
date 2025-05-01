@@ -5,13 +5,13 @@ CXXFLAGS = -Wall -std=c++17 $(INCLUDES)
 
 # Source files (with subdirectories specified)
 SRCS = Client/TUI/CreateUI.cpp \
-	   Server/prac.cpp
-      
-# Server/prac.cpp     		(PRODUCTION)
-# Client/Test/test.cpp 		(UI/UX TESTING)
-# Server/Test/test.cpp 		(Server TESTING)
+       Client/TUI/Test/test.cpp      # Entry
 
-# Object files (placed inside build/ directory, keeping folder structure)
+# Server/prac.cpp              # (PRODUCTION)
+# Client/TUI/Test/test.cpp     # (UI/UX TESTING)
+# Server/Test/test.cpp         # (Server TESTING)
+
+# Convert source files to object files with build/ prefix
 OBJS = $(SRCS:%.cpp=build/%.o)
 
 # Output binary name
@@ -19,17 +19,14 @@ TARGET = SupplySync
 
 # Default build rule (link object files into the final binary)
 $(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET)
 
-# Compile .cpp to .o, placing object files in the build directory
+# Rule to compile each source file to its corresponding object file
 build/%.o: %.cpp
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+# Clean build artifacts
+.PHONY: clean
 clean:
-	rm -r build
-
-
-
-
-
+	rm -rf build $(TARGET)

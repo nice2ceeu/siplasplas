@@ -1,3 +1,8 @@
+// Go to your project directory
+
+cd C:\Users\KC Sean\Desktop\PROJECTS\Github Project\Collaborator\siplasplas
+
+
 // Compile All Modules
 
 make
