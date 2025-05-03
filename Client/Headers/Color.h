@@ -26,13 +26,12 @@ namespace Color {
     const string bg_magenta = "\033[48;5;5m";
     const string bg_cyan = "\033[48;5;6m";
     const string bg_white = "\033[48;5;7m";
-
-    // Styles
-    const string reset = "\033[0m";          // Reset all attributes
-    const string bold = "\033[1m";           // Bold text
-    const string italic = "\033[3m";         // Italic text
-    const string underline = "\033[4m";      // Underline text
-    const string strikethrough = "\033[9m";   // Strikethrough text
+    
+    const std::string reset = "\033[0m";          // Reset all attributes
+    const std::string bold = "\033[1m";           // Bold text
+    const std::string italic = "\033[3m";         // Italic text
+    const std::string underline = "\033[4m";      // Underline text
+    const std::string strikethrough = "\033[9m";   // Strikethrough text
 
     // High color codes (256 colors)
     const string gray = "\033[38;5;8m";

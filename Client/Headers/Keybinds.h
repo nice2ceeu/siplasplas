@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <windows.h>
+#include <fstream>
 
 // Helper function to convert string to lowercase
 inline std::string to_lower(std::string s) {

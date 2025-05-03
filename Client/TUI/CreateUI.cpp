@@ -63,7 +63,7 @@ void set_terminal_size(){
 }
 
 // CENTER ALL TEXT
-void print(const string &text, const int side, const string color){ 
+void print(const string &text, const int side, const vector<string> &colors){ 
     string fulltext = text;
 
     int effective_length = 0; 
@@ -74,8 +74,14 @@ void print(const string &text, const int side, const string color){
         effective_length += 1; 
     } 
 
-    int spaces = ((term_width - effective_length) / 2) + side; 
-    cout << string(spaces, ' ') << color << fulltext << "\e[0m";
+    int spaces = ((term_width - effective_length) / 2) + side;
+    cout << string(spaces, ' ');
+    
+    // Apply all colors
+    for (const string &color : colors) {
+        cout << color;
+    }
+    cout << fulltext << "\e[0m";
 }
 
 // PRINT TO RIGHT
@@ -290,24 +296,80 @@ void move_cursor(int dx, int dy) {
     set_cursor(pos.X + dx, pos.Y + dy);
 }
 
-// Create an input box with specified width and color
-void print_input_box(int width, const string &bg_color){
+// Original function
+void print_input_box(int width, const int side, const string &bg_color) {
+    int spaces = ((term_width - width - 2) / 2) + side;  // -2 for the edge characters
     
-    cout << "┌";
+    // Top border
+    cout << string(spaces, ' ') << "┌";
     for(int i = 0; i < width; i++) {
         cout << "─";
     } 
     cout << "┐";
 
-    space();
-    cout << "ǀ" << bg_color << string(width, ' ') << "\033[0m" << "ǀ";
-    space();
-    cout << "└";
+    // Middle part with background color
+    space(1);
+    cout << string(spaces, ' ') << "ǀ" << bg_color << string(width, ' ') << "\033[0m" << "ǀ";
+
+    // Bottom border
+    space(1);
+    cout << string(spaces, ' ') << "└";
     for(int i = 0; i < width; i++) {
         cout << "─";
     } 
     cout << "┘";
+}
 
+// Overloaded function with label and side positioning
+void print_input_box(int width, const int side, const string &bg_color, const string &label, bool side_label, const string &position) {
+    int spaces = ((term_width - width - 2) / 2) + side;
+    
+    if (side_label) {
+        // Side label version
+        cout << string(spaces, ' ') << "┌";
+        for(int i = 0; i < width; i++) cout << "─";
+        cout << "┐";
+        
+        space(1);
+        if (position == "left") {
+            cout << string(spaces - label.length() - 1, ' ') << label << " ǀ";
+        } else {
+            cout << string(spaces, ' ') << "ǀ";
+        }
+        cout << bg_color << string(width, ' ') << "\033[0m";
+        if (position == "right") {
+            cout << "ǀ " << label;
+        } else {
+            cout << "ǀ";
+        }
+        
+        space(1);
+        cout << string(spaces, ' ') << "└";
+        for(int i = 0; i < width; i++) cout << "─";
+        cout << "┘";
+    } else {
+        // Top label version
+        if (position == "left") {
+            cout << string(spaces, ' ') << "┌─ " << label << " ";
+            int remaining = width - label.length() - 3;
+            for(int i = 0; i < remaining; i++) cout << "─";
+            cout << "┐";
+        } else {
+            cout << string(spaces, ' ') << "┌";
+            int remaining = width - label.length() - 3;
+            for(int i = 0; i < remaining; i++) cout << "─";
+            cout << " " << label << " ─┐";
+        }
+        
+        space(1);
+        cout << string(spaces, ' ') << "ǀ" 
+             << bg_color << string(width, ' ') << "\033[0m" << "ǀ";
+        
+        space(1);
+        cout << string(spaces, ' ') << "└";
+        for(int i = 0; i < width; i++) cout << "─";
+        cout << "┘";
+    }
 }
 
 

@@ -25,10 +25,12 @@
 // Headers
 #include "uix.h"
 #include "Color.h"
+#include "Config.h"
 #include "Keybinds.h"
 #include "./Client/Headers/Page.h"
 
 using namespace Color;
+using namespace Config;
 using namespace std;
 const int MAX_ITEMS = 100;
 struct Item {
@@ -111,9 +113,9 @@ void deleteItem(int idToDelete);
 void deleteUser(int idToDelete);
 void changePass(int id, string confirmedPass);
 
-void requestItems();
 void approveRequest(int requestIdToApprove);
 void cancelItems(int idToCancel);
+void render_color();
 
 std::string getCurrentDate() {
     time_t now = time(0);
@@ -185,26 +187,25 @@ void loginUser() {
 
     // UI
     char symbol = '_';
-    string login_color = Color::green;    // GREEN
-    string prompt_color = Color::cyan;   // CYAN
-    int prompt_space = -5;
 
     // DISPLAY PAGE
     space();
-    print_gradient(line_str(symbol), 119, 123);
+    print_gradient(line_str(symbol), 89, 93);
     space(4);
-
+    
     // prompt
-    print("L O G I N\n\n", 0, login_color);
-    print("Username: \n", prompt_space, prompt_color);
-    print("Password: \n", prompt_space, prompt_color);
+    print("S I G N  U P", 0);
+    space(3);
+    print_input_box(20, 0, Config::color_theme, "username", false, "left");
+    space(2);
+    print_input_box(20, 0, Config::color_theme, "password", false, "left");
 
-    space(7);
-    print_gradient(line_str(symbol), 119, 123);
+    space(3);
+    print_gradient(line_str(symbol), 89, 93);
     space(2);
     cout.flush();
 
-    string ext_color = "\e[1;30m";
+    string ext_color = Color::gray;
     cout << ext_color << "\nExit: \e" << "\e[0m";
     for(string key : exit_keybinds()){
         cout << ext_color << key <<  " \e[0m";
@@ -212,13 +213,17 @@ void loginUser() {
     cout << "\r";
 
     // USER INPUT
-    set_cursor(term_width/2, 7);
+    set_cursor(31, 8);
     
     // ask user for username
     string username;
     cin >> username;
 
-    set_cursor(term_width/2, 8);
+    set_cursor(31, 12);
+
+    if(back_key(username) || exit_key(username)){
+        return;
+    }
 
     string password;
     cin >> password;
@@ -254,7 +259,8 @@ void loginUser() {
 		
     } 
     else {
-        print_error("Login Unsuccessful");
+        space(2);
+        print("Login Unsuccessful", 0, {Color::red});
         Sleep(2000);
         loginUser();
         return;
@@ -1140,16 +1146,19 @@ void userDashboard(int id, string name ,string username, string department, stri
             }
         } while (choice != 0);
 }
+
+
+
 int main() {
     system("chcp 65001 > nul");
     set_terminal_size();
-
-	clearScreen();
-
+    
+    clearScreen();
+    
     string line_color = "\e[47m";
     
     string user_prompt;
-
+    
     do{
         space(2);
         print_gradient(line_str(' '), 227, 231, true);
@@ -1164,14 +1173,13 @@ int main() {
         
         space(4);
 
-        print_gradient(line_str(' '), 227, 231, true);
+        print_gradient(line_str(' '), 228, 231, true);
         print(line_str('='));
-        print_gradient(line_str(' '), 227, 231, true);
-        space(3);
-        
-        print("USER: ", -2);
-        space();
-        print_input_box(15);
+        print_gradient(line_str(' '), 228, 231, true);
+
+        space(2);
+        print_input_box(15, 0, Config::color_theme, "input", false);
+        set_cursor(33, 17);
         cout.flush();
         
         cin >> user_prompt;
@@ -1200,7 +1208,7 @@ int main() {
         }
         else if(exit_key(user_prompt)){
             space(3);
-            print(". . . SHUTTING DOWN . . .", 0, "\e[1;93m");
+            print(". . . SHUTTING DOWN . . .", 0, {"\e[1;93m"});
             Sleep(3000);
             system("cls");
             exit(0);         
