@@ -20,19 +20,6 @@ using namespace Color;
 int term_width = 80; 
 int term_height = 20;
 
-
-// CONFIGURATION PURPOSES
-int main1() {
-    // UI INITIAL TEST
-    print("Sample Center\n", 0, Color::red);
-    print_line();
-    print_error("ERROR!\n");
-    print_gradient("HELLO THERE EVERYONE\n");
-    print(convert_case("ThIS wIll BE FiX\n"));
-
-    return 0;
-}
-
 //? ________________________________ FUNCTION  ________________________________ 
 
 // Line with Text
@@ -56,7 +43,7 @@ void line_title(const string text, const char symbol, const string line_color, c
     cout << line_color << left << text_color << decorated_text << line_color << right << "\033[0m" << endl;
 }
 
-// Add Endline
+// ADDS ENDLINE
 void space(const int count){
     for(int i = 0; i < count; i++){
         cout << "\n";
@@ -88,10 +75,10 @@ void print(const string &text, const int side, const string color){
     } 
 
     int spaces = ((term_width - effective_length) / 2) + side; 
-    cout << string(max(0, spaces), ' ') << color << fulltext << (color.empty() ? "" : "\033[0m");
+    cout << string(spaces, ' ') << color << fulltext << "\e[0m";
 }
 
-// Print to Side
+// PRINT TO RIGHT
 void print_right(const string &text, const int side, const string color) {
     string fulltext = text;
 
@@ -108,6 +95,7 @@ void print_right(const string &text, const int side, const string color) {
     cout << string(max(0, spaces), ' ') << color << fulltext << (color.empty() ? "" : "\033[0m");
 }
 
+// PRINT TO LEFT
 void print_left(const string &text, const int side, const string color) {
     // Move cursor up 1 line and to column 1 (start of line)
     cout << "\033[1A\r" << flush;
@@ -130,6 +118,37 @@ void print_left(const string &text, const int side, const string color) {
 
     cout << output << flush;
 }
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+void print_sides(const string &left_text, const string &right_text, int side, const string &left_color, const string &right_color) {
+
+    int half_width = term_width / 2;
+
+    // LEFT SIDE
+    int left_spaces = (half_width / 2) + side;
+    string left_output = string(max(0, left_spaces), ' ') + left_color + left_text + (left_color.empty() ? "" : "\033[0m");
+
+    // RIGHT SIDE
+    int right_spaces = (half_width / 2) + side;
+    string right_output = string(max(0, right_spaces), ' ') + right_color + right_text + (right_color.empty() ? "" : "\033[0m");
+
+    // Move cursor up and return to start to overwrite same line
+    cout << "\033[1A\r" << flush;
+
+    // Combine and print
+    cout << left_output;
+
+    // Pad if needed to reach middle of screen before right text
+    int pad_to_middle = max(0, term_width / 2 - (int)left_output.length());
+    cout << string(pad_to_middle, ' ');
+
+    cout << right_output << endl;
+}
+
 
 
 // ERROR PANEL
