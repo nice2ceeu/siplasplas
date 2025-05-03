@@ -180,14 +180,50 @@ int getLastReqId() {
 //Authentication// user dashboard
 void loginUser() {
 	clearScreen();
-    string username, password;
 
-    cout << "\n--- Login ---\n";
-    cout << "Enter your username: ";
+    system("cls");
+
+    // UI
+    char symbol = '_';
+    string login_color = Color::green;    // GREEN
+    string prompt_color = Color::cyan;   // CYAN
+    int prompt_space = -5;
+
+    // DISPLAY PAGE
+    space();
+    print_gradient(line_str(symbol), 119, 123);
+    space(4);
+
+    // prompt
+    print("L O G I N\n\n", 0, login_color);
+    print("Username: \n", prompt_space, prompt_color);
+    print("Password: \n", prompt_space, prompt_color);
+
+    space(7);
+    print_gradient(line_str(symbol), 119, 123);
+    space(2);
+    cout.flush();
+
+    string ext_color = "\e[1;30m";
+    cout << ext_color << "\nExit: \e" << "\e[0m";
+    for(string key : exit_keybinds()){
+        cout << ext_color << key <<  " \e[0m";
+    }
+    cout << "\r";
+
+    // USER INPUT
+    set_cursor(term_width/2, 7);
+    
+    // ask user for username
+    string username;
     cin >> username;
-    cout << "Enter your password: ";
+
+    set_cursor(term_width/2, 8);
+
+    string password;
     cin >> password;
 	cin.ignore();
+
     ifstream file("./data.txt");
     if (!file.is_open()) {
         cout << "Unable to open user database.\n";
@@ -216,9 +252,11 @@ void loginUser() {
 			return;
 		}
 		
-    } else {
-        cout << "Login not successful.\n";
+    } 
+    else {
+        print_error("Login Unsuccessful");
         Sleep(2000);
+        loginUser();
         return;
     }
 }
@@ -1103,6 +1141,7 @@ void userDashboard(int id, string name ,string username, string department, stri
         } while (choice != 0);
 }
 int main() {
+    system("chcp 65001 > nul");
     set_terminal_size();
 
 	clearScreen();
@@ -1114,22 +1153,27 @@ int main() {
     do{
         space(2);
         print_gradient(line_str(' '), 227, 231, true);
+        print(line_title_str("WELCOME",'='));
         print_gradient(line_str(' '), 227, 231, true);
         space(4);
-
+        
         print("LOGIN", -24);
         print("REGISTER", -27);
         print("SETTINGS", -27);
         print("EXIT", -27);
-
-        space(4);
-        print_gradient(line_str(' '), 227, 231, true);
-        print_gradient(line_str(' '), 227, 231, true);
+        
         space(4);
 
+        print_gradient(line_str(' '), 227, 231, true);
+        print(line_str('='));
+        print_gradient(line_str(' '), 227, 231, true);
+        space(3);
+        
         print("USER: ", -2);
+        space();
+        print_input_box(15);
         cout.flush();
-
+        
         cin >> user_prompt;
         user_prompt = convert_case(user_prompt, "lower");
 

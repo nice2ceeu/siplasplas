@@ -8,11 +8,17 @@ cd C:\Users\KC Sean\Desktop\PROJECTS\Github Project\Collaborator\siplasplas
 make
 
 
-// Delete Build
+// Delete Build (Then "make" to recompile)
 
 make clean
 
 
-// Run App (Compile if you havent)
+// Run App (Compile if you havent yet)
 
-./SupplySync
+./SupplySync (bash)
+SupplySync (cmd)
+
+
+// Character bugs
+
+Right click on terminal -> properties -> font -> font = Consolas -> ok

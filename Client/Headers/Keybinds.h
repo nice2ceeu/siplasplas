@@ -13,94 +13,124 @@ inline std::string to_lower(std::string s) {
     return s;
 }
 
-// Login
+// Login keybinds
+inline std::vector<std::string> login_keybinds() {
+    return {"login", "l", "log"};
+}
+
 inline bool login_key(std::string input) {
     input = to_lower(input);
-    const std::vector<std::string> keybinds = {"login", "l", "log"};
+    const auto keybinds = login_keybinds();
     
-    for(const auto& key : keybinds ){
-        if(input == key){
+    for(const auto& key : keybinds) {
+        if(input == key) {
             return true;
         }
     }
     return false;
 }
 
-// Register
+// Register keybinds
+inline std::vector<std::string> register_keybinds() {
+    return {"reg", "r", "register"};
+}
+
 inline bool register_key(std::string input) {
     input = to_lower(input);
-    const std::vector<std::string> keybinds = {"reg", "r", "register"};
+    const auto keybinds = register_keybinds();
     
-    for(const auto& key : keybinds ){
-        if(input == key){
+    for(const auto& key : keybinds) {
+        if(input == key) {
             return true;
         }
     }
     return false;
 }
-// Settings
+
+// Settings keybinds
+inline std::vector<std::string> setting_keybinds() {
+    return {"s", "set", "settings"};
+}
+
 inline bool setting_key(std::string input) {
     input = to_lower(input);
-    const std::vector<std::string> keybinds = {"s", "set", "settings"};
+    const auto keybinds = setting_keybinds();
     
-    for(const auto& key : keybinds ){
-        if(input == key){
+    for(const auto& key : keybinds) {
+        if(input == key) {
             return true;
         }
     }
     return false;
 }
 
-// Back
+// Back keybinds
+inline std::vector<std::string> back_keybinds() {
+    return {"b", "back", "z", "0"};
+}
+
 inline bool back_key(std::string input) {
     input = to_lower(input);
-    const std::vector<std::string> keybinds = {"b", "back", "z", "0"};
+    const auto keybinds = back_keybinds();
     
-    for(const auto& key : keybinds ){
-        if(input == key){
+    for(const auto& key : keybinds) {
+        if(input == key) {
             return true;
         }
     }
     return false;
 }
 
-// Exit
+// Exit keybinds
+inline std::vector<std::string> exit_keybinds() {
+    return {"exit", "x", "quit", "q", "e"};
+}
+
 inline bool exit_key(std::string input) {
     input = to_lower(input);
-    const std::vector<std::string> keybinds = {"exit", "x", "quit", "q", "e"};
+    const auto keybinds = exit_keybinds();
     
-    for(const auto& key : keybinds ){
-        if(input == key){
+    for(const auto& key : keybinds) {
+        if(input == key) {
             return true;
         }
     }
     return false;
 }
 
-// Left
+// Left keybinds
+inline std::vector<std::string> left_keybinds() {
+    return {"<", "{", "a", "4"};
+}
+
 inline bool left_key(std::string input) {
     input = to_lower(input);
-    const std::vector<std::string> keybinds = {"<", "{", "a", "4"};
+    const auto keybinds = left_keybinds();
     
-    for(const auto& key : keybinds ){
-        if(input == key){
+    for(const auto& key : keybinds) {
+        if(input == key) {
             return true;
         }
     }
     return false;
 }
 
-// Right
+// Right keybinds
+inline std::vector<std::string> right_keybinds() {
+    return {">", "}", "d", "6"};
+}
+
 inline bool right_key(std::string input) {
     input = to_lower(input);
-    const std::vector<std::string> keybinds = {">", "}", "d", "6"};
+    const auto keybinds = right_keybinds();
     
-    for(const auto& key : keybinds ){
-        if(input == key){
+    for(const auto& key : keybinds) {
+        if(input == key) {
             return true;
         }
     }
     return false;
 }
+
 
 #endif

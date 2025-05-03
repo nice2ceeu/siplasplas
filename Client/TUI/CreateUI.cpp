@@ -119,10 +119,6 @@ void print_left(const string &text, const int side, const string color) {
     cout << output << flush;
 }
 
-#include <iostream>
-#include <string>
-using namespace std;
-
 
 void print_sides(const string &left_text, const string &right_text, int side, const string &left_color, const string &right_color) {
 
@@ -170,6 +166,26 @@ void print_error(const string &text, const int side){
 // ADD A LINE TO THE TERMINAL
 void print_line(const char symbol, const string &color){
     cout << color << string(term_width, symbol) << "\n\e[0m" << endl;
+}
+// Line with Text (returns string)
+string line_title_str(const string text, const char symbol){
+    string decorated_text = "  " + text + "  ";  // Text with padding
+    int text_length = decorated_text.length();
+    int line_length = term_width;
+
+    // Calculate how many symbols go on each side
+    int remaining = line_length - text_length;
+    if (remaining < 0) remaining = 0;
+
+    int left_len = remaining / 2;
+    int right_len = remaining - left_len;
+
+    // Create the left and right parts of the line
+    string left = string(left_len, symbol);
+    string right = string(right_len, symbol);
+
+    // Combine and return
+    return left + decorated_text + right;
 }
 
 // ADD A GRADIENT TEXT
@@ -252,3 +268,46 @@ string convert_case(const string &subject, const string &option) {
 
     return result;
 }
+
+// Set cursor position in terminal
+void set_cursor(int x, int y){
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+// Get current cursor position
+COORD get_cursor() {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    return csbi.dwCursorPosition;
+}
+
+// Move cursor relative to current position
+void move_cursor(int dx, int dy) {
+    COORD pos = get_cursor();
+    set_cursor(pos.X + dx, pos.Y + dy);
+}
+
+// Create an input box with specified width and color
+void print_input_box(int width, const string &bg_color){
+    
+    cout << "┌";
+    for(int i = 0; i < width; i++) {
+        cout << "─";
+    } 
+    cout << "┐";
+
+    space();
+    cout << "ǀ" << bg_color << string(width, ' ') << "\033[0m" << "ǀ";
+    space();
+    cout << "└";
+    for(int i = 0; i < width; i++) {
+        cout << "─";
+    } 
+    cout << "┘";
+
+}
+
+
