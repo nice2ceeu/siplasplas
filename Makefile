@@ -5,9 +5,9 @@ CXXFLAGS = -Wall -std=c++17 $(INCLUDES)
 
 # Source files (with subdirectories specified)
 SRCS = Client/TUI/CreateUI.cpp \
-       Client/TUI/Test/test.cpp      # Entry
+       ./main.cpp      # Entry
 
-# Server/prac.cpp              # (PRODUCTION)
+# ./main.cpp              # (PRODUCTION)
 # Client/TUI/Test/test.cpp     # (UI/UX TESTING)
 # Server/Test/test.cpp         # (Server TESTING)
 

@@ -67,7 +67,7 @@ inline bool back_key(std::string input) {
 // Exit
 inline bool exit_key(std::string input) {
     input = to_lower(input);
-    const std::vector<std::string> keybinds = {"exit", "x", "quit", "q"};
+    const std::vector<std::string> keybinds = {"exit", "x", "quit", "q", "e"};
     
     for(const auto& key : keybinds ){
         if(input == key){

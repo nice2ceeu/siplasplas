@@ -1,14 +1,34 @@
+// main.cpp
 #include <iostream>
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <string>
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
+#define byte win_byte_override
+#include <windows.h>
+#undef byte
+
+#include <sstream>
+#include <cctype>
+#include <algorithm>
 #include <limits>
+#include <regex>
+#include <cmath>
+#include <fstream>
 #include <cstdio>  
 #include <ctime>
 #include <iomanip>
 #include <vector>
 
+// Headers
+#include "uix.h"
+#include "Color.h"
+#include "Keybinds.h"
+#include "./Client/Headers/Page.h"
+
+using namespace Color;
 using namespace std;
 const int MAX_ITEMS = 100;
 struct Item {
@@ -168,7 +188,7 @@ void loginUser() {
     cout << "Enter your password: ";
     cin >> password;
 	cin.ignore();
-    ifstream file("data.txt");
+    ifstream file("./data.txt");
     if (!file.is_open()) {
         cout << "Unable to open user database.\n";
         return;
@@ -192,13 +212,14 @@ void loginUser() {
 		}else if(user.userAccess == "user"|| user.userAccess == "USER"|| user.userAccess == "User"){
 			userDashboard(user.id ,user.name ,user.username ,user.dept , user.userAccess,user.password);
 		}else{
+            cout << "User dont have access.\n";
 			return;
 		}
 		
-		
-        
     } else {
-        cout << "Invalid username or password.\n";
+        cout << "Login not successful.\n";
+        Sleep(2000);
+        return;
     }
 }
 
@@ -1082,35 +1103,77 @@ void userDashboard(int id, string name ,string username, string department, stri
         } while (choice != 0);
 }
 int main() {
+    set_terminal_size();
+
 	clearScreen();
-    int choice;
 
-    do {
-        cout << "\n=== Supply Sync ===\n";
-        cout << "1. Register\n";
-        cout << "2. Login\n";
-        cout << "0. Exit\n";
-        cout << "Enter your choice: ";
-        cin >> choice;
+    string line_color = "\e[47m";
+    
+    string user_prompt;
 
-        switch (choice) {
-            case 1:
-            	clearScreen();
-                registerUser();
-                break;
-            case 2:
-            	clearScreen();
-                loginUser();
-                break;
-            case 0:
-                cout << "Exiting the program.\n";
-                break;
-            default:
-            	clearScreen();
-                cout << "Invalid choice. Please try again.\n";
+    do{
+        space(2);
+        print_gradient(line_str(' '), 227, 231, true);
+        print_gradient(line_str(' '), 227, 231, true);
+        space(4);
+
+        print("LOGIN", -24);
+        print("REGISTER", -27);
+        print("SETTINGS", -27);
+        print("EXIT", -27);
+
+        space(4);
+        print_gradient(line_str(' '), 227, 231, true);
+        print_gradient(line_str(' '), 227, 231, true);
+        space(4);
+
+        print("USER: ", -2);
+        cout.flush();
+
+        cin >> user_prompt;
+        user_prompt = convert_case(user_prompt, "lower");
+
+        if(login_key(user_prompt)){
+            // ENTER LOGIN
+            loginUser();
+            system("cls");
+            cout.flush();
+            continue;
         }
+        else if(register_key(user_prompt)){
+            // ENTER REGISTER
+            registerUser();
+            system("cls");
+            cout.flush();
+            continue;
+        }
+        else if(setting_key(user_prompt)){
+            // ENTER SETTINGS
+            // open_settings();
+            system("cls");
+            cout.flush();
+            continue;
+        }
+        else if(exit_key(user_prompt)){
+            space(3);
+            print(". . . SHUTTING DOWN . . .", 0, "\e[1;93m");
+            Sleep(3000);
+            system("cls");
+            exit(0);         
+        }
+        else{
+            // INVALID
+            space(2);
+            print_error("Invalid Input");
+            Sleep(1000);
+            system("cls");
+            cout.flush();
 
-    } while (choice != 0);
+            continue;
+        }
+        
+    }
+    while(!exit_key(user_prompt));
 
     return 0;
 }
