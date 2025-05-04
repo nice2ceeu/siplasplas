@@ -912,7 +912,6 @@ void registerUser() {
         
         // FIRST NAME
         getline(cin, user.name);
-        cout.flush();
         if (user.name.find(' ') != string::npos) {
             set_cursor(0, 19);
             print("  Please use '-' for multiple names  ", 0, {Color::bg_red});
@@ -920,11 +919,11 @@ void registerUser() {
             system("cls");
             continue;
         }
+        cout.flush();
 
         // USERNAME
         set_cursor(31, 10);
         getline(cin, user.username);
-        cout.flush();
         if (user.username.find(' ') != string::npos) {
             set_cursor(0, 19);
             print("  Please use '-' for multiple names  ", 0, {Color::bg_red});
@@ -939,6 +938,7 @@ void registerUser() {
             system("cls");
             return;
         }
+        cout.flush();
 
         cout << "Enter password: ";
         getline(cin, user.password);
