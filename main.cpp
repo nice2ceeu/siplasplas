@@ -194,7 +194,7 @@ void loginUser() {
     space(4);
     
     // prompt
-    print("S I G N  U P", 0);
+    print("S I G N  I N", 0);
     space(3);
     print_input_box(20, 0, Config::color_theme, "username", false, "left");
     space(2);
@@ -228,6 +228,10 @@ void loginUser() {
     string password;
     cin >> password;
 	cin.ignore();
+
+    if(back_key(password) || exit_key(password)){
+        return;
+    }
 
     ifstream file("./data.txt");
     if (!file.is_open()) {
@@ -875,35 +879,82 @@ bool userExists(const string& username) {
 
 
 void registerUser() {
+    system("cls");
+
     User user;
     user.id = getLastUserId() + 1;
 
-    cout << "\n--- Register ---\n";
+    // UI
+    char symbol = '_';
+    int delay = 2500;
 
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear leftover input
+    do{
 
-    cout << "Enter first name (use dash '-' if multiple names): ";
-    getline(cin, user.name);
+        // DISPLAY PAGE
+        print_gradient(line_str(symbol), 89, 93);
+        space(3);
+        
+        // PROMPT
+        print("S I G N  U P");
+        space(2);
+        print_input_box(20, 0, Config::color_theme, "firstname", false, "left");
+        space(2);
+        print_input_box(20, 0, Config::color_theme, "username", false, "left");
+        space(2);
+        print_input_box(20, 0, Config::color_theme, "password", false, "left");
 
-    cout << "Enter username: ";
-    getline(cin, user.username);
+        space(2);
+        print_gradient(line_str(symbol), 89, 93);
+        cout.flush();
 
-    if (userExists(user.username)) {
-        return;
+        set_cursor(31, 6);
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        
+        // FIRST NAME
+        getline(cin, user.name);
+        cout.flush();
+        if (user.name.find(' ') != string::npos) {
+            set_cursor(0, 19);
+            print("  Please use '-' for multiple names  ", 0, {Color::bg_red});
+            Sleep(delay);
+            system("cls");
+            continue;
+        }
+
+        // USERNAME
+        set_cursor(31, 10);
+        getline(cin, user.username);
+        cout.flush();
+        if (user.username.find(' ') != string::npos) {
+            set_cursor(0, 19);
+            print("  Please use '-' for multiple names  ", 0, {Color::bg_red});
+            Sleep(delay);
+            system("cls");
+            continue;
+        }
+        if (userExists(user.username)) {
+            set_cursor(0, 19);
+            print("  Username already exist  ", 0, {Color::bg_red});
+            Sleep(delay);
+            system("cls");
+            return;
+        }
+
+        cout << "Enter password: ";
+        getline(cin, user.password);
+
+        cout << "Enter department (use dash '-' if multiple words): ";
+        getline(cin, user.dept);
+
+        cout << "Enter User Access (admin, user): ";
+        getline(cin, user.userAccess);
+
+        addUser(user);
+
+        cout << "Registration successful!\n";
     }
+    while(true);
 
-    cout << "Enter password: ";
-    getline(cin, user.password);
-
-    cout << "Enter department (use dash '-' if multiple words): ";
-    getline(cin, user.dept);
-
-    cout << "Enter User Access (admin, user): ";
-    getline(cin, user.userAccess);
-
-    addUser(user);
-
-    cout << "Registration successful!\n";
 }
 
 //Admin dashboard nakalagay naman HAHAHAH
@@ -1207,8 +1258,8 @@ int main() {
             continue;
         }
         else if(exit_key(user_prompt)){
-            space(3);
-            print(". . . SHUTTING DOWN . . .", 0, {"\e[1;93m"});
+            space(1);
+            print(". . . SHUTTING DOWN . . .", 0, {Color::yellow});
             Sleep(3000);
             system("cls");
             exit(0);         
