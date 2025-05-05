@@ -877,6 +877,9 @@ bool userExists(const string& username) {
     return false;
 }
 
+void registerReset(){
+    
+}
 
 void registerUser() {
     system("cls");
@@ -907,11 +910,29 @@ void registerUser() {
         print_gradient(line_str(symbol), 89, 93);
         cout.flush();
 
+        // Exit Controls
+        string ext_color = Color::gray;
+        cout << ext_color << "\nExit: \e" << "\e[0m";
+        for(string key : exit_keybinds()){
+            cout << ext_color << key <<  " \e[0m";
+        }
+        cout << "\r";
+
+        // Reset Controls
+        string back_color = Color::gray;
+        cout << back_color << "\nReset: \e" << "\e[0m";
+        for(string key : back_keybinds()){
+            cout << back_color << key <<  " \e[0m";
+        }
+        cout << "\r";
+
         set_cursor(31, 6);
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore();
         
         // FIRST NAME
         getline(cin, user.name);
+        if(exit_key(user.name)) return;
+        if(back_key(user.name)) ;
         if (user.name.find(' ') != string::npos) {
             set_cursor(0, 19);
             print("  Please use '-' for multiple names  ", 0, {Color::bg_red});
@@ -924,6 +945,7 @@ void registerUser() {
         // USERNAME
         set_cursor(31, 10);
         getline(cin, user.username);
+        if(exit_key(user.username)) return;
         if (user.username.find(' ') != string::npos) {
             set_cursor(0, 19);
             print("  Please use '-' for multiple names  ", 0, {Color::bg_red});
@@ -936,18 +958,31 @@ void registerUser() {
             print("  Username already exist  ", 0, {Color::bg_red});
             Sleep(delay);
             system("cls");
-            return;
+            continue;
         }
         cout.flush();
 
-        cout << "Enter password: ";
+
+        set_cursor(31, 14);
         getline(cin, user.password);
+        if(exit_key(user.password)) return;
+        if (user.password.find(' ') != string::npos) {
+            set_cursor(0, 19);
+            print("  Cannot add spaces to your password  ", 0, {Color::bg_red});
+            Sleep(delay);
+            system("cls");
+            continue;
+        }
+
+        system("cls");
 
         cout << "Enter department (use dash '-' if multiple words): ";
         getline(cin, user.dept);
+        if(exit_key(user.dept)) return;
 
         cout << "Enter User Access (admin, user): ";
         getline(cin, user.userAccess);
+        if(exit_key(user.userAccess)) return;
 
         addUser(user);
 
