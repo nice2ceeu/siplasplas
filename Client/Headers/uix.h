@@ -17,6 +17,7 @@ void line_title(const string text, const char symbol, const string line_color, c
 
 void set_cursor(int x, int y);
 void move_cursor(int dx, int dy);
+void clear_line(int line_number);
 
 void print_input_box(int width, const int side = 0, const string &bg_color = "\033[48;5;7m");
 void print_input_box(int width, const int side, const string &bg_color, const string &label, bool side_label, const string &position = "left");

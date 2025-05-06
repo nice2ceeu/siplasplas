@@ -253,6 +253,10 @@ void loginUser() {
 
     if (loginSuccess) {
     	if(user.userAccess == "admin" || user.userAccess == "ADMIN"|| user.userAccess == "Admin"){
+            space(2);
+            print("      Account Verified      ", 0, { Color::bg_light_green });
+            Sleep(3000);
+            system("cls");
     		adminDashboard(user.id, user.name ,user.username ,user.dept , user.userAccess, user.password);
 		}else if(user.userAccess == "user"|| user.userAccess == "USER"|| user.userAccess == "User"){
 			userDashboard(user.id ,user.name ,user.username ,user.dept , user.userAccess,user.password);
@@ -273,14 +277,12 @@ void loginUser() {
 
 //User adder
 void addUser(const User& user) {
-	clearScreen();
     ofstream file("data.txt", ios::app);
     if (file.is_open()) {
         file << user.id << " " << user.name << " " << user.username << " " << user.password << " " << user.dept << " "
 		<<user.userAccess<< endl;
 
         file.close();
-        cout << "User added.\n";
     }
 }
 //Item ADder
@@ -869,16 +871,11 @@ bool userExists(const string& username) {
         getline(ss, userAccess, ' ');     
 
         if (storedUsername == username) {
-            cout << "Username already exists.\n";
             return true;
         }
     }
 
     return false;
-}
-
-void registerReset(){
-    
 }
 
 void registerUser() {
@@ -887,52 +884,58 @@ void registerUser() {
     User user;
     user.id = getLastUserId() + 1;
 
-    // UI
+    // UI Configuration
     char symbol = '_';
     int delay = 2500;
+    int gradient[] = {89, 93};
+    string input_box_pos = "left";
 
     do{
-
+       
         // DISPLAY PAGE
-        print_gradient(line_str(symbol), 89, 93);
+        print_gradient(line_str(symbol), gradient[0], gradient[1]);
         space(3);
         
         // PROMPT
         print("S I G N  U P");
         space(2);
-        print_input_box(20, 0, Config::color_theme, "firstname", false, "left");
+        print_input_box(20, 0, Config::color_theme, "firstname", false, input_box_pos);
         space(2);
-        print_input_box(20, 0, Config::color_theme, "username", false, "left");
+        print_input_box(20, 0, Config::color_theme, "username", false, input_box_pos);
         space(2);
-        print_input_box(20, 0, Config::color_theme, "password", false, "left");
+        print_input_box(20, 0, Config::color_theme, "password", false, input_box_pos);
 
         space(2);
-        print_gradient(line_str(symbol), 89, 93);
+        print_gradient(line_str(symbol), gradient[0], gradient[1]);
         cout.flush();
 
         // Exit Controls
-        string ext_color = Color::gray;
-        cout << ext_color << "\nExit: \e" << "\e[0m";
+        string control_color = Color::gray;
+
+        cout << control_color << "\nExit: \e" << "\e[0m";
         for(string key : exit_keybinds()){
-            cout << ext_color << key <<  " \e[0m";
+            cout << control_color << key <<  " \e[0m";
         }
         cout << "\r";
 
-        // Reset Controls
-        string back_color = Color::gray;
-        cout << back_color << "\nReset: \e" << "\e[0m";
+        // Back Controls
+        cout << control_color << "\nReset: \e" << "\e[0m";
         for(string key : back_keybinds()){
-            cout << back_color << key <<  " \e[0m";
+            cout << control_color << key <<  " \e[0m";
         }
         cout << "\r";
 
-        set_cursor(31, 6);
-        cin.ignore();
         
         // FIRST NAME
+        set_cursor(31, 6);
+        std::cin.clear();
+        if (cin.peek() == '\n') cin.ignore();
         getline(cin, user.name);
         if(exit_key(user.name)) return;
-        if(back_key(user.name)) ;
+        if(back_key(user.name)){
+            system("cls");
+            continue;
+        }
         if (user.name.find(' ') != string::npos) {
             set_cursor(0, 19);
             print("  Please use '-' for multiple names  ", 0, {Color::bg_red});
@@ -946,6 +949,10 @@ void registerUser() {
         set_cursor(31, 10);
         getline(cin, user.username);
         if(exit_key(user.username)) return;
+        if(back_key(user.username)){
+            system("cls");
+            continue;
+        }
         if (user.username.find(' ') != string::npos) {
             set_cursor(0, 19);
             print("  Please use '-' for multiple names  ", 0, {Color::bg_red});
@@ -966,9 +973,13 @@ void registerUser() {
         set_cursor(31, 14);
         getline(cin, user.password);
         if(exit_key(user.password)) return;
+        if(back_key(user.password)){
+            system("cls");
+            continue;
+        }
         if (user.password.find(' ') != string::npos) {
             set_cursor(0, 19);
-            print("  Cannot add spaces to your password  ", 0, {Color::bg_red});
+            print("  Cannot add spaces to your password (use '-')  ", 0, {Color::bg_red});
             Sleep(delay);
             system("cls");
             continue;
@@ -976,20 +987,76 @@ void registerUser() {
 
         system("cls");
 
-        cout << "Enter department (use dash '-' if multiple words): ";
+        // DISPLAY PAGE 2
+        print_gradient(line_str(symbol), gradient[0], gradient[1]);
+        space(4);
+        
+        // PROMPT
+        print("U S E R - T Y P E");
+        space(3);
+        print_input_box(20, 0, Config::color_theme, "department", false, input_box_pos);
+        space(2);
+        print_input_box(20, 0, Config::color_theme, "access-control", false, input_box_pos);
+        space(4);
+        print_gradient(line_str(symbol), gradient[0], gradient[1]);
+
+        // Exit Controls
+        cout << control_color << "\nExit: \e" << "\e[0m";
+        for(string key : exit_keybinds()){
+            cout << control_color << key <<  " \e[0m";
+        }
+        cout << "\r";
+        
+        // Back Controls
+        cout << control_color << "\nReset: \e" << "\e[0m";
+        for(string key : back_keybinds()){
+            cout << control_color << key <<  " \e[0m";
+        }
+        cout << "\r";
+
+        cout.flush();
+
+        set_cursor(31, 8);
         getline(cin, user.dept);
         if(exit_key(user.dept)) return;
+        if(back_key(user.dept)){
+            system("cls");
+            continue;
+        }
+        if (user.dept.find(' ') != string::npos) {
+            set_cursor(0, 19);
+            print("  Cannot add spaces to your Department (use '-')  ", 0, {Color::bg_red});
+            Sleep(delay);
+            system("cls");
+            continue;
+        }
 
-        cout << "Enter User Access (admin, user): ";
+        set_cursor(31, 12);
         getline(cin, user.userAccess);
         if(exit_key(user.userAccess)) return;
+        if(back_key(user.userAccess)){
+            system("cls");
+            continue;
+        }
+        string access = convert_case(user.userAccess, "lower");
+        if(access != "admin" && access != "user") {
+            set_cursor(0, 19);
+            print("  Access control must be 'admin' or 'user'  ", 0, {Color::bg_red});
+            Sleep(delay);
+            system("cls"); 
+            continue;
+        }
 
+        // Commit Transaction
         addUser(user);
 
-        cout << "Registration successful!\n";
+        space(2);
+        print("      Registration successful!      ", 0, { Color::bg_blue });
+        Sleep(3000);
+        system("cls");
+        return;
     }
     while(true);
-
 }
 
 //Admin dashboard nakalagay naman HAHAHAH

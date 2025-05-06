@@ -373,3 +373,10 @@ void print_input_box(int width, const int side, const string &bg_color, const st
 }
 
 
+// Clear a specific line in terminal
+void clear_line(int line_number) {
+    COORD originalPos = get_cursor();
+    set_cursor(0, line_number);
+    cout << string(term_width, ' ');
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), originalPos);
+}
