@@ -254,27 +254,27 @@ void loginUser() {
     if (loginSuccess) {
     	if(convert_case(user.userAccess, "lower") == "admin"){
             space(2);
-            print("      Account Verified      ", 0, { Color::bg_light_green });
+            print("      Account Verified      ", 0, { Color::bg_light_green, Color::black});
             Sleep(3000);
             system("cls");
     		adminDashboard(user.id, user.name ,user.username ,user.dept , user.userAccess, user.password);
 		}
         else if(convert_case(user.userAccess, "lower") == "user"){
             space(2);
-            print("      Account Verified      ", 0, { Color::bg_light_green });
+            print("      Account Verified      ", 0, { Color::bg_light_green, Color::black });
             Sleep(3000);
             system("cls");
 			userDashboard(user.id ,user.name ,user.username ,user.dept , user.userAccess,user.password);
 		}
         else{
-            cout << "User dont have access.\n";
+            print("     User dont have access     ", 0, { Color::bg_red, Color::white });
 			return;
 		}
 		
     } 
     else {
         space(2);
-        print("Login Unsuccessful", 0, {Color::red});
+        print("     Login Unsuccessful     ", 0, { Color::bg_red, Color::white });
         Sleep(2000);
         loginUser();
         return;
