@@ -93,6 +93,7 @@ struct ReturnedItem{
 void adminDashboard(int id, string name ,string username, string department, string userAccess,string password);
 void userDashboard(int id, string name ,string username, string department, string userAccess,string password);
 void loginUser();
+void open_settings();
 
 void addUser(const User& user);
 void addItem(const Item&item);
@@ -1354,7 +1355,7 @@ int main() {
         }
         else if(setting_key(user_prompt)){
             // ENTER SETTINGS
-            // open_settings();
+            open_settings();
             system("cls");
             cout.flush();
             continue;
@@ -1383,4 +1384,127 @@ int main() {
     return 0;
 }
 
+// Split function definition 
+vector<string> split(const string &s, char delimiter){ 
+    vector<string> tokens; string token; 
+    stringstream ss(s); 
+    while (getline(ss, token, delimiter)) { 
+        tokens.push_back(token); 
+    } 
+    return tokens;
+}
 
+// SETTINGS PAGE
+void open_settings() {
+    system("cls");
+    cin.ignore();
+    
+    while(true) {
+        // Display header
+        space();
+        print_gradient(line_str('='), 35, 40);
+        space(2);
+        print("SETTINGS", 0, {"\e[1;36m"});
+        space(2);
+        
+        // Display current keybinds
+        print("CURRENT KEYBINDS:", 1, {"\e[0;33m"});
+        space(2);
+        
+        print("Exit: ", -5, {"\e[1;36m"});
+        for(string key : exit_keybinds()) cout << key << " ";
+        space();
+        
+        print("Back: ", -5, {"\e[1;36m"});
+        for(string key : back_keybinds()) cout << key << " ";
+        space();
+        
+        print("Right Page: ", -8, {"\e[1;36m"});
+        for(string key : right_keybinds()) cout << key << " ";
+        space();
+        
+        print("Left Page: ", -7, {"\e[1;36m"});
+        for(string key : left_keybinds()) cout << key << " ";
+        space();
+        
+        print("Double Right: ", -9, {"\e[1;36m"});
+        for(string key : db_right_keybinds()) cout << key << " ";
+        space();
+        
+        print("Double Left: ", -8, {"\e[1;36m"});
+        for(string key : db_left_keybinds()) cout << key << " "; 
+        space(2);
+        
+        // Display commands
+        print_gradient(line_str('-'), 35, 40);
+        space();
+        
+        space();
+        print("'add'/'remove' + 'category' + 'key'", 0, {Color::gray});
+        space(2);
+
+        // Input box
+        print_input_box(30, 0, Config::color_theme, "command", false);
+        set_cursor(26, 18);
+        
+        string command;
+        getline(cin, command);
+
+        if(exit_key(command)) return;
+        if(back_key(command)) return;
+        
+        vector<string> cmds = split(command, ' ');
+        if(cmds.size() < 3) {
+            set_cursor(0, 15);
+            print("                  Invalid Command                  ", 0, {Color::bg_red, Color::white});
+            Sleep(2000);
+            system("cls");
+            continue;
+        }
+
+        string action = convert_case(cmds[0], "lower");
+        string category = convert_case(cmds[1], "lower"); 
+        string key = cmds[2];
+
+        if(action == "add") {
+            if(category == "exit") exit_add(key);
+            else if(category == "back") back_add(key);
+            else if(category == "right") right_add(key);
+            else if(category == "left") left_add(key);
+            else if(category == "db_right") db_right_add(key);
+            else if(category == "db_left") db_left_add(key);
+            else {
+
+                set_cursor(0, 15);
+                print("                  Invalid category                  ", 0, {Color::bg_red, Color::white});
+                Sleep(2000);
+                system("cls");
+                continue;
+            }
+
+            set_cursor(0, 15);
+            print("               Key Added Successfully               ", 0, {Color::bg_light_blue, Color::black});
+        }
+        else if(action == "remove") {
+            if(category == "exit") exit_remove(key);
+            else if(category == "back") back_remove(key); 
+            else if(category == "right") right_remove(key);
+            else if(category == "left") left_remove(key);
+            else if(category == "db_right") db_right_remove(key);
+            else if(category == "db_left") db_left_remove(key);
+            else {
+
+                set_cursor(0, 15);
+                print("                  Invalid category                  ", 0, {Color::bg_red, Color::white});
+                Sleep(2000);
+                system("cls");
+                continue;
+            }
+            set_cursor(0, 15);
+            print("              Key Removed Successfully              ", 0, {Color::bg_light_blue, Color::black});
+        }
+        
+        Sleep(2000);
+        system("cls");
+    }
+}

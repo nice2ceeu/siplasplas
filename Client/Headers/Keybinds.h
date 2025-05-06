@@ -16,8 +16,9 @@ inline std::string to_lower(std::string s) {
 }
 
 // Login keybinds
-inline std::vector<std::string> login_keybinds() {
-    return {"login", "l", "log"};
+inline std::vector<std::string>& login_keybinds() {
+    static std::vector<std::string> keybinds = {"login", "l", "log"};
+    return keybinds;
 }
 
 inline bool login_key(std::string input) {
@@ -33,8 +34,9 @@ inline bool login_key(std::string input) {
 }
 
 // Register keybinds
-inline std::vector<std::string> register_keybinds() {
-    return {"reg", "r", "register"};
+inline std::vector<std::string>& register_keybinds() {
+    static std::vector<std::string> keybinds = {"reg", "r", "register"};
+    return keybinds;
 }
 
 inline bool register_key(std::string input) {
@@ -49,9 +51,9 @@ inline bool register_key(std::string input) {
     return false;
 }
 
-// Settings keybinds
-inline std::vector<std::string> setting_keybinds() {
-    return {"s", "set", "settings"};
+inline std::vector<std::string>& setting_keybinds() {
+    static std::vector<std::string> keybinds = {"s", "set", "settings"};
+    return keybinds;
 }
 
 inline bool setting_key(std::string input) {
@@ -65,10 +67,9 @@ inline bool setting_key(std::string input) {
     }
     return false;
 }
-
-// Back keybinds
-inline std::vector<std::string> back_keybinds() {
-    return {"b", "back", "z", "0"};
+inline std::vector<std::string>& back_keybinds() {
+    static std::vector<std::string> keybinds = {"b", "back", "z", "0"};
+    return keybinds;
 }
 
 inline bool back_key(std::string input) {
@@ -83,9 +84,9 @@ inline bool back_key(std::string input) {
     return false;
 }
 
-// Exit keybinds
-inline std::vector<std::string> exit_keybinds() {
-    return {"exit", "x", "quit", "q", "e"};
+inline std::vector<std::string>& exit_keybinds() {
+    static std::vector<std::string> keybinds = {"exit", "x", "quit", "q", "e"};
+    return keybinds;
 }
 
 inline bool exit_key(std::string input) {
@@ -100,9 +101,9 @@ inline bool exit_key(std::string input) {
     return false;
 }
 
-// Left keybinds
-inline std::vector<std::string> left_keybinds() {
-    return {"<", "{", "a", "4"};
+inline std::vector<std::string>& left_keybinds() {
+    static std::vector<std::string> keybinds = {"<", "{", "a", "4"};
+    return keybinds;
 }
 
 inline bool left_key(std::string input) {
@@ -117,9 +118,13 @@ inline bool left_key(std::string input) {
     return false;
 }
 
-// Right keybinds
-inline std::vector<std::string> right_keybinds() {
-    return {">", "}", "d", "6"};
+inline std::vector<std::string>& db_left_keybinds() {
+    static std::vector<std::string> keybinds = {"<<", "{{", "aa", "44"};
+    return keybinds;
+}
+inline std::vector<std::string>& right_keybinds() {
+    static std::vector<std::string> keybinds = {">", "}", "d", "6"};
+    return keybinds;
 }
 
 inline bool right_key(std::string input) {
@@ -133,6 +138,141 @@ inline bool right_key(std::string input) {
     }
     return false;
 }
+
+inline std::vector<std::string>& db_right_keybinds() {
+    static std::vector<std::string> keybinds = {">>", "}}", "dd", "66"};
+    return keybinds;
+}
+
+inline bool db_right_key(std::string input) {
+    input = to_lower(input);
+    const auto keybinds = right_keybinds();
+    
+    for(const auto& key : keybinds) {
+        if(input == key) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Login keybinds management
+inline void login_add(const std::string& key) {
+    auto& keybinds = login_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower(key));
+    }
+}
+
+inline void login_remove(const std::string& key) {
+    auto& keybinds = login_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+}
+
+// Register keybinds management
+inline void register_add(const std::string& key) {
+    auto& keybinds = register_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower(key));
+    }
+}
+
+inline void register_remove(const std::string& key) {
+    auto& keybinds = register_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+}
+
+// Settings keybinds management
+inline void setting_add(const std::string& key) {
+    auto& keybinds = setting_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower(key));
+    }
+}
+
+inline void setting_remove(const std::string& key) {
+    auto& keybinds = setting_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+}
+
+// Back keybinds management
+inline void back_add(const std::string& key) {
+    auto& keybinds = back_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower(key));
+    }
+}
+
+inline void back_remove(const std::string& key) {
+    auto& keybinds = back_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+}
+
+// Exit keybinds management
+inline void exit_add(const std::string& key) {
+    auto& keybinds = exit_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower(key));
+    }
+}
+
+inline void exit_remove(const std::string& key) {
+    auto& keybinds = exit_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+}
+
+// Left keybinds management
+inline void left_add(const std::string& key) {
+    auto& keybinds = left_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower(key));
+    }
+}
+
+inline void left_remove(const std::string& key) {
+    auto& keybinds = left_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+}
+
+// Double Left keybinds management
+inline void db_left_add(const std::string& key) {
+    auto& keybinds = db_left_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower(key));
+    }
+}
+
+inline void db_left_remove(const std::string& key) {
+    auto& keybinds = db_left_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+}
+
+// Right keybinds management
+inline void right_add(const std::string& key) {
+    auto& keybinds = right_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower(key));
+    }
+}
+
+inline void right_remove(const std::string& key) {
+    auto& keybinds = right_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+}
+
+// Double Right keybinds management
+inline void db_right_add(const std::string& key) {
+    auto& keybinds = db_right_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower(key));
+    }
+}
+
+inline void db_right_remove(const std::string& key) {
+    auto& keybinds = db_right_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+}
+
 
 
 #endif
