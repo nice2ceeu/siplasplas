@@ -1099,6 +1099,13 @@ void adminDashboard(int id,string name ,string username, string department, stri
         print_input_box(20, 0, Config::color_theme, "command", false);
         set_cursor(31, 18);
 
+        /* 
+        
+            TODO: Make the keybinds for all the options
+            TODO: Logout function will be moved to the account settings as there is no more space here
+        
+        */
+
         cin >> choice;
         switch (choice) {
             case 1:
