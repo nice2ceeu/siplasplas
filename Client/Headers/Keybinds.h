@@ -15,7 +15,7 @@ inline std::string to_lower(std::string s) {
     return s;
 }
 
-// Login keybinds
+// LOGIN KEYBINDS
 inline std::vector<std::string>& login_keybinds() {
     static std::vector<std::string> keybinds = {"login", "l", "log"};
     return keybinds;
@@ -33,7 +33,7 @@ inline bool login_key(std::string input) {
     return false;
 }
 
-// Register keybinds
+// REGISTER KEYBINDS
 inline std::vector<std::string>& register_keybinds() {
     static std::vector<std::string> keybinds = {"reg", "r", "register"};
     return keybinds;
@@ -51,6 +51,7 @@ inline bool register_key(std::string input) {
     return false;
 }
 
+// SETTING KEYBINDS
 inline std::vector<std::string>& setting_keybinds() {
     static std::vector<std::string> keybinds = {"s", "set", "settings"};
     return keybinds;
@@ -67,6 +68,8 @@ inline bool setting_key(std::string input) {
     }
     return false;
 }
+
+// BACK KEYBINDS
 inline std::vector<std::string>& back_keybinds() {
     static std::vector<std::string> keybinds = {"b", "back", "z", "0"};
     return keybinds;
@@ -84,6 +87,7 @@ inline bool back_key(std::string input) {
     return false;
 }
 
+// EXIT KEYBINDS
 inline std::vector<std::string>& exit_keybinds() {
     static std::vector<std::string> keybinds = {"exit", "x", "quit", "q", "e"};
     return keybinds;
@@ -101,6 +105,7 @@ inline bool exit_key(std::string input) {
     return false;
 }
 
+// LEFT KEYBINDS
 inline std::vector<std::string>& left_keybinds() {
     static std::vector<std::string> keybinds = {"<", "{", "a", "4"};
     return keybinds;
@@ -118,6 +123,7 @@ inline bool left_key(std::string input) {
     return false;
 }
 
+// DOUBLE LEFT KEYBINDS
 inline std::vector<std::string>& db_left_keybinds() {
     static std::vector<std::string> keybinds = {"<<", "{{", "aa", "44"};
     return keybinds;
@@ -127,6 +133,7 @@ inline std::vector<std::string>& right_keybinds() {
     return keybinds;
 }
 
+// RIGHT KEYBINDS
 inline bool right_key(std::string input) {
     input = to_lower(input);
     const auto keybinds = right_keybinds();
@@ -139,6 +146,7 @@ inline bool right_key(std::string input) {
     return false;
 }
 
+// DOUBLE RIGHT KEYBINDS
 inline std::vector<std::string>& db_right_keybinds() {
     static std::vector<std::string> keybinds = {">>", "}}", "dd", "66"};
     return keybinds;
@@ -155,6 +163,9 @@ inline bool db_right_key(std::string input) {
     }
     return false;
 }
+
+
+//?  ---------------- KEYBINDS MANAGEMENT ----------------
 
 // Login keybinds management
 inline void login_add(const std::string& key) {

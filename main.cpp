@@ -27,7 +27,6 @@
 #include "Color.h"
 #include "Config.h"
 #include "Keybinds.h"
-#include "./Client/Headers/Page.h"
 
 using namespace Color;
 using namespace Config;
@@ -253,15 +252,21 @@ void loginUser() {
     file.close();
 
     if (loginSuccess) {
-    	if(user.userAccess == "admin" || user.userAccess == "ADMIN"|| user.userAccess == "Admin"){
+    	if(convert_case(user.userAccess, "lower") == "admin"){
             space(2);
             print("      Account Verified      ", 0, { Color::bg_light_green });
             Sleep(3000);
             system("cls");
     		adminDashboard(user.id, user.name ,user.username ,user.dept , user.userAccess, user.password);
-		}else if(user.userAccess == "user"|| user.userAccess == "USER"|| user.userAccess == "User"){
+		}
+        else if(convert_case(user.userAccess, "lower") == "user"){
+            space(2);
+            print("      Account Verified      ", 0, { Color::bg_light_green });
+            Sleep(3000);
+            system("cls");
 			userDashboard(user.id ,user.name ,user.username ,user.dept , user.userAccess,user.password);
-		}else{
+		}
+        else{
             cout << "User dont have access.\n";
 			return;
 		}
@@ -1070,23 +1075,29 @@ void adminDashboard(int id,string name ,string username, string department, stri
     int deleteId;
     int returnId;
     Item item;
-	cout << "Login successful! Welcome,"<<endl;
+
     while (choice != 0) {
-    	cout << "Name: " << name << " (" << username << ").\n";
-        cout << "Department: " << department << " Access: "<< userAccess<<endl;
-        cout << "\nADMIN DASHBOARD\n";
-        cout << "Navigate it (1-9 | 0 - Logout)\n\n";
-        cout << "1. Show all Items\n";
-        cout << "2. Show all Users\n";
-        cout << "3. Add Item\n";
-    	cout << "4. Show Borrow Requests\n";
-    	cout << "5. Show Borrowed Items\n";
-    	cout << "6. Show Returned Items\n";
-        cout << "7. Delete Item\n";
-        cout << "8. Delete User\n";
-        cout << "9. Settings\n";
-        cout << "0. Log Out\n";
-        cout << "Action: ";
+        print_gradient(line_str('='), 203, 207);
+
+        print_triple_text("Name: " + name + "(" + username + ")", "Access: " + userAccess, "Department: " + department, 2);
+ 
+        print_gradient(line_str('='), 203, 207);
+        
+        space(2);
+        print_gradient("ADMIN DASHBOARD", 221, 223);
+        space(2);
+
+        print_triple_input_box("Show Items", "Show Users", "Add Item", 20, 3, 1, Color::light_yellow);
+        space();
+        print_triple_input_box("Borrow Request", "Borrowed Items", "Returned Items", 20, 3, 1, Color::light_yellow);
+        space();
+        print_triple_input_box("Delete Item", "Delete User", "Account Settings", 20, 3, 1, Color::light_yellow);
+        space(2);
+        print_gradient(line_str('='), 203, 207);
+        space(1);
+        
+        print_input_box(20, 0, Config::color_theme, "command", false);
+        set_cursor(31, 18);
 
         cin >> choice;
         switch (choice) {
@@ -1308,6 +1319,8 @@ int main() {
     set_terminal_size();
     
     clearScreen();
+
+    adminDashboard(12, "Kc-Sean", "Sean-Brix", "IT-DEPT", "admin", "121802");
     
     string line_color = "\e[47m";
     
@@ -1316,7 +1329,7 @@ int main() {
     do{
         space(2);
         print_gradient(line_str(' '), 227, 231, true);
-        print(line_title_str("WELCOME",'='));
+        print(line_title_str("SUPPLYSYNC",'='));
         print_gradient(line_str(' '), 227, 231, true);
         space(4);
         
@@ -1362,7 +1375,16 @@ int main() {
         }
         else if(exit_key(user_prompt)){
             space(1);
-            print(". . . SHUTTING DOWN . . .", 0, {Color::yellow});
+            char exit_line = '~';
+            string exit_color = Color::light_red;
+
+            set_cursor(0, 3);
+            line_title("SHUTTING DOWN", exit_line, exit_color, Config::color_theme);
+            
+            set_cursor(0, 13);
+            print_line(exit_line, exit_color);
+            
+            set_cursor(37, 17);
             Sleep(3000);
             system("cls");
             exit(0);         

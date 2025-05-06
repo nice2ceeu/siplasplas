@@ -151,6 +151,37 @@ void print_sides(const string &left_text, const string &right_text, int side, co
     cout << right_output << endl;
 }
 
+void print_triple_text(const string &left_text, const string &middle_text, const string &right_text, 
+    int side, const string &left_color, const string &middle_color, const string &right_color) 
+{
+    int section_width = term_width / 3;  // Split terminal into thirds
+
+    // Calculate effective lengths (ignoring color codes)
+    int left_len = left_text.length();
+    int middle_len = middle_text.length();
+    int right_len = right_text.length();
+
+    // Calculate spaces needed for each section
+    int left_spaces = section_width - left_len;
+    int middle_spaces = section_width - middle_len;
+    int right_spaces = section_width - right_len;
+
+    // Print left section
+    cout << string(left_spaces/2 + side, ' ') 
+         << left_color << left_text << "\033[0m"
+         << string(left_spaces/2, ' ');
+
+    // Print middle section
+    cout << string(middle_spaces/2, ' ')
+         << middle_color << middle_text << "\033[0m"
+         << string(middle_spaces/2, ' ');
+
+    // Print right section
+    cout << string(right_spaces/2, ' ')
+         << right_color << right_text << "\033[0m"
+         << string(right_spaces/2, ' ') << endl;
+}
+
 
 
 // ERROR PANEL
@@ -321,10 +352,33 @@ void print_input_box(int width, const int side, const string &bg_color) {
 }
 
 // Overloaded function with label and side positioning
-void print_input_box(int width, const int side, const string &bg_color, const string &label, bool side_label, const string &position) {
+void print_input_box(int width, const int side, const string &bg_color, const string &label, bool side_label, const string &position, bool inside_label) {
     int spaces = ((term_width - width - 2) / 2) + side;
     
-    if (side_label) {
+    if (inside_label) {
+        // Inside label version
+        cout << string(spaces, ' ') << "┌";
+        for(int i = 0; i < width; i++) cout << "─";
+        cout << "┐";
+        
+        space(1);
+        cout << string(spaces, ' ') << "ǀ";
+        if (position == "left") {
+            cout << bg_color << label << string(width - label.length(), ' ') << "\033[0m";
+        } else if (position == "right") {
+            cout << bg_color << string(width - label.length(), ' ') << label << "\033[0m";
+        } else { // center
+            int pad = (width - label.length()) / 2;
+            cout << bg_color << string(pad, ' ') << label << string(width - pad - label.length(), ' ') << "\033[0m";
+        }
+        cout << "ǀ";
+        
+        space(1);
+        cout << string(spaces, ' ') << "└";
+        for(int i = 0; i < width; i++) cout << "─";
+        cout << "┘";
+    }
+    else if (side_label) {
         // Side label version
         cout << string(spaces, ' ') << "┌";
         for(int i = 0; i < width; i++) cout << "─";
@@ -379,4 +433,76 @@ void clear_line(int line_number) {
     set_cursor(0, line_number);
     cout << string(term_width, ' ');
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), originalPos);
+}
+
+void print_triple_input_box(
+    const string &label1, const string &label2, const string &label3,
+    int width, const int cellgap, const int side, const string &line_color, 
+    const string &text_color, const string &bg_color  
+){
+    // Calculate actual widths needed for each box
+    int width1 = max(width, (int)label1.length() + 2);
+    int width2 = max(width, (int)label2.length() + 2);
+    int width3 = max(width, (int)label3.length() + 2);
+    
+    int spaces = max(0, side + ((term_width - (width1 + width2 + width3 + 2 * cellgap)) / 4));
+    
+    // Top borders
+    cout << string(spaces, ' ') << line_color;
+    cout << "┌"; for(int i = 0; i < width1; i++) cout << "─"; cout << "┐";
+    cout << string(cellgap, ' ');
+    cout << "┌"; for(int i = 0; i < width2; i++) cout << "─"; cout << "┐";
+    cout << string(cellgap, ' ');
+    cout << "┌"; for(int i = 0; i < width3; i++) cout << "─"; cout << "┐\033[0m";
+
+    // Labels
+    space(1);
+    cout << string(spaces, ' ') << line_color;
+    cout << "ǀ" << bg_color << text_color << string((width1 - label1.length()) / 2, ' ') << label1 << string((width1 - label1.length() + 1) / 2, ' ') << line_color << "ǀ";
+    cout << string(cellgap, ' ');
+    cout << "ǀ" << bg_color << text_color << string((width2 - label2.length()) / 2, ' ') << label2 << string((width2 - label2.length() + 1) / 2, ' ') << line_color << "ǀ";
+    cout << string(cellgap, ' ');
+    cout << "ǀ" << bg_color << text_color << string((width3 - label3.length()) / 2, ' ') << label3 << string((width3 - label3.length() + 1) / 2, ' ') << line_color << "ǀ\033[0m";
+
+    // Bottom borders
+    space(1);
+    cout << string(spaces, ' ') << line_color;
+    cout << "└"; for(int i = 0; i < width1; i++) cout << "─"; cout << "┘";
+    cout << string(cellgap, ' ');
+    cout << "└"; for(int i = 0; i < width2; i++) cout << "─"; cout << "┘";
+    cout << string(cellgap, ' ');
+    cout << "└"; for(int i = 0; i < width3; i++) cout << "─"; cout << "┘\033[0m";
+}
+
+void print_label_box(
+    const string &label,
+    int width, const int side, const string &line_color, 
+    const string &text_color, const string &bg_color
+){
+    // Calculate actual width needed for box
+    int width_actual = max(width, (int)label.length() + 2);
+    
+    int spaces = max(0, side + ((term_width - width_actual) / 2));
+    
+    // Top border
+    cout << string(spaces, ' ') << line_color;
+    cout << "┌"; 
+    for(int i = 0; i < width_actual; i++) cout << "─"; 
+    cout << "┐\033[0m";
+
+    // Label
+    space(1);
+    cout << string(spaces, ' ') << line_color;
+    cout << "ǀ" << bg_color << text_color 
+         << string((width_actual - label.length()) / 2, ' ') 
+         << label 
+         << string((width_actual - label.length() + 1) / 2, ' ') 
+         << line_color << "ǀ\033[0m";
+
+    // Bottom border
+    space(1);
+    cout << string(spaces, ' ') << line_color;
+    cout << "└";
+    for(int i = 0; i < width_actual; i++) cout << "─";
+    cout << "┘\033[0m";
 }
