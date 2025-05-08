@@ -1101,10 +1101,11 @@ void adminDashboard(int id,string name ,string username, string department, stri
         set_cursor(31, 18);
 
         /* 
-        
-            TODO: Make the keybinds for all the options
+
             TODO: Logout function will be moved to the account settings as there is no more space here
-        
+            TODO: Some functions need its own page, a command input for user so the page stays (all other similar ones too)
+            TODO: A UI for displaying datas from the database
+            
         */
 
         getline(cin, choice);
@@ -1113,8 +1114,6 @@ void adminDashboard(int id,string name ,string username, string department, stri
             clearScreen();
             readItems();
             continue;
-
-            // TODO: Need its own page, a command input for user so the page stays (all other similar ones too)
         }
 
         else if(show_users_key(choice)) {
