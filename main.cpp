@@ -614,6 +614,19 @@ void readReturnItems() {
 
  //return all items
 void readItems() {
+
+    /*
+    
+        TODO: A UI function for printing three text in a pre-define position regardless of length
+
+        sample:
+                    Sean        Calinao         Philippines
+                    Ethel       Tabios          America
+                    Naomi       Bertiz                 
+
+    */
+
+
 	clearScreen();
     ifstream file("item.txt");
     Item item;
@@ -625,6 +638,12 @@ void readItems() {
         file.close();
     }
     cout <<"--------------------------------"<< endl;
+
+    print_input_box(20, 0, {Config::color_theme}, "command", false, "left");
+
+    string command;
+    cin >> command;
+
 }
 //user's all requests only
 void readMyRequest(int id) {
@@ -1105,7 +1124,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
             TODO: Logout function will be moved to the account settings as there is no more space here
             TODO: Some functions need its own page, a command input for user so the page stays (all other similar ones too)
             TODO: A UI for displaying datas from the database
-            
+
         */
 
         getline(cin, choice);
@@ -1373,7 +1392,7 @@ int main() {
     
     clearScreen();
 
-    adminDashboard(12, "Kc-Sean", "Sean-Brix", "IT-DEPT", "admin", "121802");
+    // adminDashboard(12, "Kc-Sean", "Sean-Brix", "IT-DEPT", "admin", "121802");
     
     string line_color = "\e[47m";
     

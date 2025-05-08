@@ -1226,6 +1226,7 @@ void cart_page(const int &user_id) {
 
     while (true) { 
         system("cls");
+        
         // Color setting
         string reset_c = "\e[0m";
         string l_color = "\e[0;33m";
