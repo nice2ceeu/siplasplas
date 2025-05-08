@@ -1106,15 +1106,21 @@ void adminDashboard(int id,string name ,string username, string department, stri
         
         */
 
-        cin >> choice;
+        if(!(cin >> choice)) {
+            cin.clear(); // Clear error flags
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
+            choice = -1; // Set choice to trigger default case
+        }
         switch (choice) {
             case 1:
                 clearScreen();
                 readItems();
+                continue;
                 break;
             case 2:
                 clearScreen();
                 readUsers();
+                continue;
                 break;
             case 3:
                 clearScreen();
@@ -1125,24 +1131,23 @@ void adminDashboard(int id,string name ,string username, string department, stri
                 cout << "Enter quantity: ";
                 cin >> item.quantity;
                 addItem(item);
+                continue;
                 break;
             case 4:
                 readAllUserRequest();
                 cout << "Enter Operation\n1- Approve 0- DashBoard\nAction: ";
-                    cin>> action;
-                    if(action ==1){
-                    	cout << "Enter Req. ID to Approve: ";
-                    	cin>> approveId;
-                    	approveRequest(approveId);
-                    	break;
-		
-					}else if(action == 0){
-						clearScreen();
-                		break;
-					}
-					else{
-						break;
-					}
+
+                cin>> action;
+                if(action ==1){
+                    cout << "Enter Req. ID to Approve: ";
+                    cin>> approveId;
+                    approveRequest(approveId);
+                }
+                else if(action == 0){
+                    clearScreen();
+                }
+
+                continue;
                 break;
             case 5:
                 readAllBorrowedItem();
@@ -1152,13 +1157,12 @@ void adminDashboard(int id,string name ,string username, string department, stri
                 	cout << "Enter Req. ID to Return: ";
                 	cin >> returnId;
                 	returnItem(returnId);
-                	break;
-                }else if(action2 == 0){
+                }
+                else if(action2 == 0){
                 	clearScreen();
-                	break;
-				}else{
-					break;	
 				}
+                continue;
+				break;	
             case 6:
             	readReturnItems();
             	break;
@@ -1168,6 +1172,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
                 cout << "Enter ID to delete Item: ";
                 cin >> deleteId;
                 deleteItem(deleteId);
+                continue;
                 break;
             case 8:
                 clearScreen();
@@ -1175,45 +1180,55 @@ void adminDashboard(int id,string name ,string username, string department, stri
                 cout << "Enter ID to delete user: ";
                 cin >> deleteId;
                 deleteUser(deleteId);
+                continue;
                 break;
             case 9:
             	clearScreen();
-                	cout << "1. Change password\n0. back\nAction: ";
-                	cin >>action;
-                	if(action == 1){
-                		clearScreen();
-                		cin.ignore();
-                		string currentPass, newPass, confirmPass;
-                		cout << "Enter current Password: ";
-                		getline(cin, currentPass);
-                		cout << "Enter new Password: ";
-                		getline(cin,newPass);
-                		cout << "Confirm Password: ";
-                		getline(cin,confirmPass);
-                		
-                		if(currentPass == password){
-							if(newPass == confirmPass){
-	                			changePass(id,confirmPass);
-	                			break;
-							}else{
-								cout << "Passwords not Match\n";
-								break;
-							}
-						}else{
-							cout<< "Password do not match in our Database\n";
-						}
-					}else if(action == 0){
-						break;
-					}else{
-						break;
-					}
+                cout << "1. Change password\n0. back\nAction: ";
+                cin >>action;
+                if(action == 1){
+                    clearScreen();
+                    cin.ignore();
+                    string currentPass, newPass, confirmPass;
+                    cout << "Enter current Password: ";
+                    getline(cin, currentPass);
+                    cout << "Enter new Password: ";
+                    getline(cin,newPass);
+                    cout << "Confirm Password: ";
+                    getline(cin,confirmPass);
+                    
+                    if(currentPass == password){
+                        if(newPass == confirmPass){
+                            changePass(id,confirmPass);
+                            continue;
+                        }
+                        else{
+                            cout << "Passwords not Match\n";
+                            continue;
+                        }
+                    }
+                    else{
+                        cout<< "Password do not match in our Database\n";
+                    }
+
+                }
+                else if(action == 0){
+                    continue;
+                }
+
+                cout << "Invalid";
+                break;
         
             case 0:
                 clearScreen();
                 cout << "Logging out of admin dashboard...\n";
                 break;
+
             default:
                 cout << "Invalid input.\n";
+                Sleep(2500);
+                system("cls");
+                continue;
         }
     }
 }
