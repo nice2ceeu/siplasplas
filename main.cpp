@@ -1106,9 +1106,14 @@ void adminDashboard(int id,string name ,string username, string department, stri
         
         */
 
+        getline(cin, choice);
+
         if(choice == "1") {
             clearScreen();
             readItems();
+            continue;
+
+            // TODO: Need its own page, a command input for user so the page stays (all other similar ones too)
         }
 
         else if(choice == "2") {
@@ -1170,7 +1175,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
         else if(choice == "6") {
 
             readReturnItems();
-
+            continue;
         }
 
         else if(choice == "7") {
@@ -1240,7 +1245,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
             cout << "Invalid";
         }
 
-        else if(choice == "0") {
+        else if(exit_key(choice) || back_key(choice)) {
 
             clearScreen();
             cout << "Logging out of admin dashboard...\n";
@@ -1253,11 +1258,10 @@ void adminDashboard(int id,string name ,string username, string department, stri
             Sleep(2500); 
             system("cls");
             continue;
-            
+
         }
     }
-    while(choice == "");
-    // TODO: Replace this with keybinds function
+    while(exit_key(choice) || back_key(choice));
 }
 
 void userDashboard(int id, string name ,string username, string department, string userAccess ,string password){

@@ -1,6 +1,6 @@
 # Compiler and flags
 CXX = g++
-INCLUDES = -IClient/Headers
+INCLUDES = -IClient/Headers -IClient/Page
 CXXFLAGS = -Wall -std=c++17 $(INCLUDES)
 
 # Source files (with subdirectories specified)
