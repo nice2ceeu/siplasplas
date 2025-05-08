@@ -27,6 +27,7 @@
 #include "Color.h"
 #include "Config.h"
 #include "Keybinds.h"
+#include "admin_dashboard.h"
 
 using namespace Color;
 using namespace Config;
@@ -1108,7 +1109,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
 
         getline(cin, choice);
 
-        if(choice == "1") {
+        if(show_items_key(choice)) {
             clearScreen();
             readItems();
             continue;
@@ -1116,13 +1117,13 @@ void adminDashboard(int id,string name ,string username, string department, stri
             // TODO: Need its own page, a command input for user so the page stays (all other similar ones too)
         }
 
-        else if(choice == "2") {
+        else if(show_users_key(choice)) {
             clearScreen(); 
             readUsers();
             continue;
         }
 
-        else if(choice == "3") {
+        else if(add_item_key(choice)) {
             clearScreen();
             item.id = getLastItemId() + 1;
             cout << "Name of Item (dash separated if multiple words): ";
@@ -1134,7 +1135,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
             continue;
         }
 
-        else if(choice == "4") {
+        else if(borrow_request_key(choice)) {
 
             readAllUserRequest();
             cout << "Enter Operation\n1- Approve 0- DashBoard\nAction: ";
@@ -1152,7 +1153,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
             continue;
         } 
 
-        else if(choice == "5") {
+        else if(borrowed_items_key(choice)) {
 
             readAllBorrowedItem();
             cout << "Enter Operation\n1- Return Item  0-DashBoard\nAction: ";
@@ -1172,13 +1173,13 @@ void adminDashboard(int id,string name ,string username, string department, stri
 
         }
 
-        else if(choice == "6") {
+        else if(returned_items_key(choice)) {
 
             readReturnItems();
             continue;
         }
 
-        else if(choice == "7") {
+        else if(delete_items_key(choice)) {
 
             clearScreen();
             readItems();
@@ -1189,7 +1190,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
 
         }
 
-        else if(choice == "8") {
+        else if(delete_user_key(choice)) {
 
             clearScreen();
             readUsers();
@@ -1200,7 +1201,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
 
         }
 
-        else if(choice == "9") {
+        else if(account_settings_key(choice)) {
 
             clearScreen();
             cout << "1. Change password\n0. back\nAction: ";

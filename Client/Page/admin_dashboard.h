@@ -1,5 +1,5 @@
-#ifndef KEYBINDS_H
-#define KEYBINDS_H
+#ifndef ADMIN_DASHBOARD_H
+#define ADMIN_DASHBOARD_H
 
 #include <iostream>
 #include <string>
@@ -15,7 +15,7 @@ using namespace Color;
 using namespace Config;
 
 // Helper function to convert string to lowercase
-inline std::string to_lower(std::string s) {
+inline std::string to_lower_dashboard(std::string s) {
     std::transform(s.begin(), s.end(), s.begin(), ::tolower);
     return s;
 }
@@ -29,7 +29,7 @@ inline std::vector<std::string>& show_items_keybinds() {
 }
 
 inline bool show_items_key(std::string input) {
-    input = to_lower(input);
+    input = to_lower_dashboard(input);
     const auto keybinds = show_items_keybinds();
     for(const auto& key : keybinds) {
         if(input == key) return true;
@@ -39,14 +39,14 @@ inline bool show_items_key(std::string input) {
 
 inline void show_items_add(const std::string& key) {
     auto& keybinds = show_items_keybinds();
-    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
-        keybinds.push_back(to_lower(key));
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_dashboard(key));
     }
 }
 
 inline void show_items_remove(const std::string& key) {
     auto& keybinds = show_items_keybinds();
-    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)), keybinds.end());
 }
 
 
@@ -58,7 +58,7 @@ inline std::vector<std::string>& show_users_keybinds() {
 }
 
 inline bool show_users_key(std::string input) {
-    input = to_lower(input);
+    input = to_lower_dashboard(input);
     const auto keybinds = show_users_keybinds();
     for(const auto& key : keybinds) {
         if(input == key) return true;
@@ -68,43 +68,43 @@ inline bool show_users_key(std::string input) {
 
 inline void show_users_add(const std::string& key) {
     auto& keybinds = show_users_keybinds();
-    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
-        keybinds.push_back(to_lower(key));
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_dashboard(key));
     }
 }
 
 inline void show_users_remove(const std::string& key) {
     auto& keybinds = show_users_keybinds();
-    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)), keybinds.end());
 }
 
 
 //? ------ ADD ITEMS KEYBINDS ------
 
-inline std::vector<std::string>& add_items_keybinds() {
+inline std::vector<std::string>& add_item_keybinds() {
     static std::vector<std::string> keybinds = {"add items"};
     return keybinds;
 }
 
-inline bool add_items_key(std::string input) {
-    input = to_lower(input);
-    const auto keybinds = add_items_keybinds();
+inline bool add_item_key(std::string input) {
+    input = to_lower_dashboard(input);
+    const auto keybinds = add_item_keybinds();
     for(const auto& key : keybinds) {
         if(input == key) return true;
     }
     return false;
 }
 
-inline void add_items_add(const std::string& key) {
-    auto& keybinds = add_items_keybinds();
-    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
-        keybinds.push_back(to_lower(key));
+inline void add_item_add(const std::string& key) {
+    auto& keybinds = add_item_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_dashboard(key));
     }
 }
 
-inline void add_items_remove(const std::string& key) {
-    auto& keybinds = add_items_keybinds();
-    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+inline void add_item_remove(const std::string& key) {
+    auto& keybinds = add_item_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)), keybinds.end());
 }
 
 
@@ -116,7 +116,7 @@ inline std::vector<std::string>& borrow_request_keybinds() {
 }
 
 inline bool borrow_request_key(std::string input) {
-    input = to_lower(input);
+    input = to_lower_dashboard(input);
     const auto keybinds = borrow_request_keybinds();
     for(const auto& key : keybinds) {
         if(input == key) return true;
@@ -126,14 +126,14 @@ inline bool borrow_request_key(std::string input) {
 
 inline void borrow_request_add(const std::string& key) {
     auto& keybinds = borrow_request_keybinds();
-    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
-        keybinds.push_back(to_lower(key));
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_dashboard(key));
     }
 }
 
 inline void borrow_request_remove(const std::string& key) {
     auto& keybinds = borrow_request_keybinds();
-    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)), keybinds.end());
 }
 
 
@@ -145,7 +145,7 @@ inline std::vector<std::string>& borrowed_items_keybinds() {
 }
 
 inline bool borrowed_items_key(std::string input) {
-    input = to_lower(input);
+    input = to_lower_dashboard(input);
     const auto keybinds = borrowed_items_keybinds();
     for(const auto& key : keybinds) {
         if(input == key) return true;
@@ -155,14 +155,14 @@ inline bool borrowed_items_key(std::string input) {
 
 inline void borrowed_items_add(const std::string& key) {
     auto& keybinds = borrowed_items_keybinds();
-    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
-        keybinds.push_back(to_lower(key));
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_dashboard(key));
     }
 }
 
 inline void borrowed_items_remove(const std::string& key) {
     auto& keybinds = borrowed_items_keybinds();
-    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)), keybinds.end());
 }
 
 
@@ -174,7 +174,7 @@ inline std::vector<std::string>& returned_items_keybinds() {
 }
 
 inline bool returned_items_key(std::string input) {
-    input = to_lower(input);
+    input = to_lower_dashboard(input);
     const auto keybinds = returned_items_keybinds();
     for(const auto& key : keybinds) {
         if(input == key) return true;
@@ -184,14 +184,14 @@ inline bool returned_items_key(std::string input) {
 
 inline void returned_items_add(const std::string& key) {
     auto& keybinds = returned_items_keybinds();
-    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
-        keybinds.push_back(to_lower(key));
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_dashboard(key));
     }
 }
 
 inline void returned_items_remove(const std::string& key) {
     auto& keybinds = returned_items_keybinds();
-    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)), keybinds.end());
 }
 
 
@@ -203,7 +203,7 @@ inline std::vector<std::string>& delete_items_keybinds() {
 }
 
 inline bool delete_items_key(std::string input) {
-    input = to_lower(input);
+    input = to_lower_dashboard(input);
     const auto keybinds = delete_items_keybinds();
     for(const auto& key : keybinds) {
         if(input == key) return true;
@@ -213,14 +213,14 @@ inline bool delete_items_key(std::string input) {
 
 inline void delete_items_add(const std::string& key) {
     auto& keybinds = delete_items_keybinds();
-    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
-        keybinds.push_back(to_lower(key));
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_dashboard(key));
     }
 }
 
 inline void delete_items_remove(const std::string& key) {
     auto& keybinds = delete_items_keybinds();
-    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)), keybinds.end());
 }
 
 
@@ -232,7 +232,7 @@ inline std::vector<std::string>& delete_user_keybinds() {
 }
 
 inline bool delete_user_key(std::string input) {
-    input = to_lower(input);
+    input = to_lower_dashboard(input);
     const auto keybinds = delete_user_keybinds();
     for(const auto& key : keybinds) {
         if(input == key) return true;
@@ -242,14 +242,14 @@ inline bool delete_user_key(std::string input) {
 
 inline void delete_user_add(const std::string& key) {
     auto& keybinds = delete_user_keybinds();
-    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
-        keybinds.push_back(to_lower(key));
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_dashboard(key));
     }
 }
 
 inline void delete_user_remove(const std::string& key) {
     auto& keybinds = delete_user_keybinds();
-    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)), keybinds.end());
 }
 
 
@@ -261,7 +261,7 @@ inline std::vector<std::string>& account_settings_keybinds() {
 }
 
 inline bool account_settings_key(std::string input) {
-    input = to_lower(input);
+    input = to_lower_dashboard(input);
     const auto keybinds = account_settings_keybinds();
     for(const auto& key : keybinds) {
         if(input == key) return true;
@@ -271,14 +271,14 @@ inline bool account_settings_key(std::string input) {
 
 inline void account_settings_add(const std::string& key) {
     auto& keybinds = account_settings_keybinds();
-    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
-        keybinds.push_back(to_lower(key));
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_dashboard(key));
     }
 }
 
 inline void account_settings_remove(const std::string& key) {
     auto& keybinds = account_settings_keybinds();
-    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)), keybinds.end());
 }
 
 
