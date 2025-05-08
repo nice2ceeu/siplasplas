@@ -1071,12 +1071,12 @@ void adminDashboard(int id,string name ,string username, string department, stri
     int action;
     int action2;
 	int approveId;
-    int choice = -1;  // Initializings
+    string choice;  // Initializings
     int deleteId;
     int returnId;
     Item item;
 
-    while (choice != 0) {
+    do{
         print_gradient(line_str('='), 203, 207);
 
         print_triple_text("Name: " + name + "(" + username + ")", "Access: " + userAccess, "Department: " + department, 2);
@@ -1106,131 +1106,158 @@ void adminDashboard(int id,string name ,string username, string department, stri
         
         */
 
-        if(!(cin >> choice)) {
-            cin.clear(); // Clear error flags
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
-            choice = -1; // Set choice to trigger default case
+        if(choice == "1") {
+            clearScreen();
+            readItems();
         }
-        switch (choice) {
-            case 1:
+
+        else if(choice == "2") {
+            clearScreen(); 
+            readUsers();
+            continue;
+        }
+
+        else if(choice == "3") {
+            clearScreen();
+            item.id = getLastItemId() + 1;
+            cout << "Name of Item (dash separated if multiple words): ";
+            cin.ignore();
+            getline(cin, item.name);
+            cout << "Enter quantity: ";
+            cin >> item.quantity;
+            addItem(item);
+            continue;
+        }
+
+        else if(choice == "4") {
+
+            readAllUserRequest();
+            cout << "Enter Operation\n1- Approve 0- DashBoard\nAction: ";
+
+            cin>> action;
+            if(action ==1){
+                cout << "Enter Req. ID to Approve: ";
+                cin>> approveId;
+                approveRequest(approveId);
+            }
+            else if(action == 0){
                 clearScreen();
-                readItems();
-                continue;
-                break;
-            case 2:
+            }
+
+            continue;
+        } 
+
+        else if(choice == "5") {
+
+            readAllBorrowedItem();
+            cout << "Enter Operation\n1- Return Item  0-DashBoard\nAction: ";
+            cin >> action2;
+
+            if(action2 == 1){
+                cout << "Enter Req. ID to Return: ";
+                cin >> returnId;
+                returnItem(returnId);
+            }
+
+            else if(action2 == 0){
                 clearScreen();
-                readUsers();
-                continue;
-                break;
-            case 3:
+            }
+
+            continue;
+
+        }
+
+        else if(choice == "6") {
+
+            readReturnItems();
+
+        }
+
+        else if(choice == "7") {
+
+            clearScreen();
+            readItems();
+            cout << "Enter ID to delete Item: ";
+            cin >> deleteId;
+            deleteItem(deleteId);
+            continue;
+
+        }
+
+        else if(choice == "8") {
+
+            clearScreen();
+            readUsers();
+            cout << "Enter ID to delete user: ";
+            cin >> deleteId;
+            deleteUser(deleteId);
+            continue;
+
+        }
+
+        else if(choice == "9") {
+
+            clearScreen();
+            cout << "1. Change password\n0. back\nAction: ";
+            cin >>action;
+
+            if(action == 1){
+
                 clearScreen();
-                item.id = getLastItemId() + 1;
-                cout << "Name of Item (dash separated if multiple words): ";
                 cin.ignore();
-                getline(cin, item.name);
-                cout << "Enter quantity: ";
-                cin >> item.quantity;
-                addItem(item);
-                continue;
-                break;
-            case 4:
-                readAllUserRequest();
-                cout << "Enter Operation\n1- Approve 0- DashBoard\nAction: ";
+                string currentPass, newPass, confirmPass;
+                cout << "Enter current Password: ";
+                getline(cin, currentPass);
+                cout << "Enter new Password: ";
+                getline(cin,newPass);
+                cout << "Confirm Password: ";
+                getline(cin,confirmPass);
+                
+                if(currentPass == password){
 
-                cin>> action;
-                if(action ==1){
-                    cout << "Enter Req. ID to Approve: ";
-                    cin>> approveId;
-                    approveRequest(approveId);
-                }
-                else if(action == 0){
-                    clearScreen();
-                }
-
-                continue;
-                break;
-            case 5:
-                readAllBorrowedItem();
-                cout << "Enter Operation\n1- Return Item  0-DashBoard\nAction: ";
-                cin >> action2;
-                if(action2 == 1){
-                	cout << "Enter Req. ID to Return: ";
-                	cin >> returnId;
-                	returnItem(returnId);
-                }
-                else if(action2 == 0){
-                	clearScreen();
-				}
-                continue;
-				break;	
-            case 6:
-            	readReturnItems();
-            	break;
-            case 7:
-                clearScreen();
-                readItems();
-                cout << "Enter ID to delete Item: ";
-                cin >> deleteId;
-                deleteItem(deleteId);
-                continue;
-                break;
-            case 8:
-                clearScreen();
-                readUsers();
-                cout << "Enter ID to delete user: ";
-                cin >> deleteId;
-                deleteUser(deleteId);
-                continue;
-                break;
-            case 9:
-            	clearScreen();
-                cout << "1. Change password\n0. back\nAction: ";
-                cin >>action;
-                if(action == 1){
-                    clearScreen();
-                    cin.ignore();
-                    string currentPass, newPass, confirmPass;
-                    cout << "Enter current Password: ";
-                    getline(cin, currentPass);
-                    cout << "Enter new Password: ";
-                    getline(cin,newPass);
-                    cout << "Confirm Password: ";
-                    getline(cin,confirmPass);
-                    
-                    if(currentPass == password){
-                        if(newPass == confirmPass){
-                            changePass(id,confirmPass);
-                            continue;
-                        }
-                        else{
-                            cout << "Passwords not Match\n";
-                            continue;
-                        }
+                    if(newPass == confirmPass){
+                        changePass(id,confirmPass);
+                        continue;
                     }
+
                     else{
-                        cout<< "Password do not match in our Database\n";
+                        cout << "Passwords not Match\n";
+                        continue;
                     }
 
                 }
-                else if(action == 0){
-                    continue;
+
+                else{
+                    cout<< "Password do not match in our Database\n";
                 }
 
-                cout << "Invalid";
-                break;
-        
-            case 0:
-                clearScreen();
-                cout << "Logging out of admin dashboard...\n";
-                break;
+            }
 
-            default:
-                cout << "Invalid input.\n";
-                Sleep(2500);
-                system("cls");
+            else if(action == 0){
                 continue;
+            }
+
+            cout << "Invalid";
+        }
+
+        else if(choice == "0") {
+
+            clearScreen();
+            cout << "Logging out of admin dashboard...\n";
+
+        }
+
+        else {
+
+            cout << "Invalid input.\n";
+            Sleep(2500); 
+            system("cls");
+            continue;
+            
         }
     }
+    while(choice == "");
+    // TODO: Replace this with keybinds function
 }
 
 void userDashboard(int id, string name ,string username, string department, string userAccess ,string password){
