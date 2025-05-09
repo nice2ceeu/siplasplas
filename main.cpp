@@ -626,24 +626,39 @@ void readItems() {
 
     */
 
+   
+    clearScreen();
+    cout << " <<" << string(term_width * 0.40, ' ') <<" All Items " << string(term_width * 0.38, ' ') << " >>\n";
 
-	clearScreen();
     ifstream file("item.txt");
     Item item;
-    if (file.is_open()) {
-        while (file >> item.id >> item.name>> item.quantity) {
-            cout << "ID: " << item.id << ", Name: " << item.name << " Quantity: " << item.quantity << endl;
-
-        }
-        file.close();
-    }
-    cout <<"--------------------------------"<< endl;
-
-    print_input_box(20, 0, {Config::color_theme}, "command", false, "left");
-
     string command;
-    cin >> command;
 
+    if (file.is_open()) {
+        do{
+
+            print_gradient(line_str('-'), 35, 40);
+
+            while (file >> item.id >> item.name>> item.quantity) {
+
+                space();
+                cout<< "\t  ";
+                cout << left << setw(20) << ("ID: " + to_string(item.id)) 
+                     << setw(30) << ("Name: " + item.name)
+                     << setw(20) << ("Quantity: " + to_string(item.quantity));
+                space();
+
+                print_gradient(line_str('-'), 35, 40);
+                
+            }
+            file.close();
+
+            print_input_box(20, 0, {Config::color_theme}, "command", false, "left");
+            cin >> command;
+        }
+        while(exit_key(command) || back_key(command));
+    }
+    
 }
 //user's all requests only
 void readMyRequest(int id) {
@@ -1153,6 +1168,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
             continue;
         }
 
+
         else if(borrow_request_key(choice)) {
 
             readAllUserRequest();
@@ -1385,14 +1401,13 @@ void userDashboard(int id, string name ,string username, string department, stri
 }
 
 
-
 int main() {
     system("chcp 65001 > nul");
     set_terminal_size();
     
     clearScreen();
 
-    // adminDashboard(12, "Kc-Sean", "Sean-Brix", "IT-DEPT", "admin", "121802");
+    adminDashboard(12, "Kc-Sean", "Sean-Brix", "IT-DEPT", "admin", "121802");
     
     string line_color = "\e[47m";
     

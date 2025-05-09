@@ -156,30 +156,34 @@ void print_triple_text(const string &left_text, const string &middle_text, const
 {
     int section_width = term_width / 3;  // Split terminal into thirds
 
-    // Calculate effective lengths (ignoring color codes)
+    // Calculate effective lengths
     int left_len = left_text.length();
     int middle_len = middle_text.length();
     int right_len = right_text.length();
 
-    // Calculate spaces needed for each section
-    int left_spaces = section_width - left_len;
-    int middle_spaces = section_width - middle_len;
-    int right_spaces = section_width - right_len;
+    // Calculate padding
+    int left_padding = (section_width - left_len) / 2;
+    int middle_padding = (section_width - middle_len) / 2;
+    int right_padding = (section_width - right_len) / 2;
+
+    // Print initial side padding
+    for (int i = 0; i < side; i++) cout << ' ';
 
     // Print left section
-    cout << string(left_spaces/2 + side, ' ') 
-         << left_color << left_text << "\033[0m"
-         << string(left_spaces/2, ' ');
+    for (int i = 0; i < left_padding; i++) cout << ' ';
+    cout << left_color << left_text << "\033[0m";
+    for (int i = 0; i < section_width - left_len - left_padding; i++) cout << ' ';
 
     // Print middle section
-    cout << string(middle_spaces/2, ' ')
-         << middle_color << middle_text << "\033[0m"
-         << string(middle_spaces/2, ' ');
+    for (int i = 0; i < middle_padding; i++) cout << ' ';
+    cout << middle_color << middle_text << "\033[0m";
+    for (int i = 0; i < section_width - middle_len - middle_padding; i++) cout << ' ';
 
     // Print right section
-    cout << string(right_spaces/2, ' ')
-         << right_color << right_text << "\033[0m"
-         << string(right_spaces/2, ' ') << endl;
+    for (int i = 0; i < right_padding; i++) cout << ' ';
+    cout << right_color << right_text << "\033[0m";
+    for (int i = 0; i < section_width - right_len - right_padding; i++) cout << ' ';
+    cout << endl;
 }
 
 
