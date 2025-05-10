@@ -108,15 +108,25 @@ void readMyCancelled(int id);
 void readMyBorrow(int id);
 void readAllBorrowedItem();
 
-void updateUser(int idToUpdate, const User& updatedUser);
-
 void deleteItem(int idToDelete);
 void deleteUser(int idToDelete);
 void changePass(int id, string confirmedPass);
 
 void approveRequest(int requestIdToApprove);
 void cancelItems(int idToCancel);
-void render_color();
+
+void debug(const string bug, const int time = 3000);
+
+void setColor(int color) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+
+void debug(const string bug, const int time){
+    clearScreen();
+    space(5);
+    print(("       " + bug + "       "), 0, {Color::bg_bright_green, Color::black});
+    Sleep(time);
+}
 
 std::string getCurrentDate() {
     time_t now = time(0);
@@ -556,17 +566,165 @@ void cancelItems(int idToCancel) {
 
 void readUsers() {
     clearScreen();
-        ifstream file("data.txt"); 
-        User user;
-        if (file.is_open()) {
-            while (file >> user.id >> user.name >> user.username >> user.password >> user.dept>> user.userAccess) {
-            		cout << "ID: " << user.id << ", Name: " << user.name << ", Username: " << user.username << ", Password: " 
-				<< user.password << ", dept: " << user.dept << ", Access: "<< user.userAccess<< endl;   
-            }
-           file.close();
+    vector<User> users;
+    ifstream file("data.txt");
+    User user;
+
+    // Read all users into vector
+    while (file >> user.id >> user.name >> user.username >> user.password >> user.dept >> user.userAccess) {
+        users.push_back(user);
+    }
+    file.close();
+
+    const int USERS_PER_PAGE = 5;
+    int currentPage = 0;
+    int totalPages = (users.size() + USERS_PER_PAGE - 1) / USERS_PER_PAGE;
+    string command;
+
+    do {
+        clearScreen();
+        cout << " <<" << string(term_width * 0.40, ' ') << " All Users " << string(term_width * 0.38, ' ') << " >>\n";
+        print_gradient(line_str('_'), 35, 40);
+
+        // Display users for current page
+        int start = currentPage * USERS_PER_PAGE;
+        int end = min(start + USERS_PER_PAGE, (int)users.size());
+
+        for (int i = start; i < end; i++) {
+            cout << "\t\t";
+            
+            cout << Color::cyan;
+            cout << left << setw(25) << ("ID: " + to_string(users[i].id));
+
+            cout << Color::yellow;
+            cout << setw(25) << ("Name: " + users[i].name);
+
+            cout << Color::white;
+            cout << setw(15) << ("Username: " + users[i].username);
+            
+            space();
+            cout << "\t";
+
+            cout << Color::green;
+            cout << setw(25) << ("Dept: " + users[i].dept);
+
+            cout << Color::light_red;
+            cout << setw(25) << ("Access: " + users[i].userAccess);
+
+            cout << Color::reset;
+            space();
+            print_gradient(line_str('_'), 35, 40);
         }
-        cout <<"--------------------------------"<< endl;
-    } 
+
+        space(2);
+        print("Command: ", -28);
+        print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
+        cout << "\033[54D";
+        cin >> command;
+
+        // Handle navigation
+        if (right_key(command)) {
+            if (currentPage < totalPages - 1) currentPage++;
+        }
+        else if (db_right_key(command)) {
+            currentPage = min(currentPage + 2, totalPages - 1);
+        }
+        else if (tri_right_key(command)) {
+            currentPage = totalPages - 1;
+        }
+        else if (left_key(command)) {
+            if (currentPage > 0) currentPage--;
+        }
+        else if (db_left_key(command)) {
+            currentPage = max(currentPage - 2, 0);
+        }
+        else if (tri_left_key(command)) {
+            currentPage = 0;
+        }
+    }
+    while (!exit_key(command) && !back_key(command));
+    clearScreen();
+    cin.ignore();
+    return;
+}
+
+//return all items
+void readItems() {
+    clearScreen();
+
+    vector<Item> items;
+    ifstream file("item.txt");
+    Item item;
+
+    // Read all items into vector
+    while (file >> item.id >> item.name >> item.quantity) {
+        items.push_back(item);
+    }
+    file.close();
+
+    const int ITEMS_PER_PAGE = 7;
+    int currentPage = 0;
+    int totalPages = (items.size() + ITEMS_PER_PAGE - 1) / ITEMS_PER_PAGE;
+    string command;
+
+    do {
+        clearScreen();
+        cout << " <<" << string(term_width * 0.40, ' ') <<" All Items " << string(term_width * 0.38, ' ') << " >>\n";
+        print_gradient(line_str('_'), 35, 40);
+
+        // Display items for current page
+        int start = currentPage * ITEMS_PER_PAGE;
+        int end = min(start + ITEMS_PER_PAGE, (int)items.size());
+
+        for (int i = start; i < end; i++) {
+            cout << "\t\t";
+
+            setColor(11); // Cyan for ID
+            cout << left << setw(20) << ("ID: " + to_string(items[i].id));
+
+            setColor(14); // Yellow for Name
+            cout << setw(30) << "Name: " + items[i].name;
+
+            setColor(10); // Green for Quantity
+            cout << setw(15) << ("Quantity: " + to_string(items[i].quantity));
+
+            setColor(7);
+            space();
+            print_gradient(line_str('_'), 35, 40);
+        }
+
+        space(2);
+        print("Command: ", -28);
+        print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
+        cout << "\033[54D";
+        cin >> command;
+
+        // Handle navigation
+        if (right_key(command)) {
+            if (currentPage < totalPages - 1) currentPage++;
+        }
+        else if (db_right_key(command)) {
+            currentPage = min(currentPage + 2, totalPages - 1);
+        }
+        else if (tri_right_key(command)) {
+            currentPage = totalPages - 1;
+        }
+        else if (left_key(command)) {
+            if (currentPage > 0) currentPage--;
+        }
+        else if (db_left_key(command)) {
+            currentPage = max(currentPage - 2, 0);
+        }
+        else if (tri_left_key(command)) {
+            currentPage = 0;
+        }
+    }
+    while (!exit_key(command) && !back_key(command));
+    clearScreen();
+    cin.ignore();
+    return;
+}
+
 //changing password
 void changePass(int id, string confirmedPass){
 	clearScreen();
@@ -612,75 +770,6 @@ void readReturnItems() {
         cout <<"--------------------------------"<< endl;
 } 
 
- //return all items
-void readItems() {
-    clearScreen();
-    cout << " <<" << string(term_width * 0.40, ' ') << " All Items " << string(term_width * 0.38, ' ') << " >>\n";
-
-    vector<Item> items;
-    ifstream file("item.txt");
-    Item item;
-
-    // Read all items into vector
-    while (file >> item.id >> item.name >> item.quantity) {
-        items.push_back(item);
-    }
-    file.close();
-
-    const int ITEMS_PER_PAGE = 7;
-    int currentPage = 0;
-    int totalPages = (items.size() + ITEMS_PER_PAGE - 1) / ITEMS_PER_PAGE;
-    string command;
-
-    do {
-        clearScreen();
-        cout << " <<" << string(term_width * 0.40, ' ') <<" All Items " << string(term_width * 0.38, ' ') << " >>\n";
-        print_gradient(line_str('~'), 35, 40);
-
-        // Display items for current page
-        int start = currentPage * ITEMS_PER_PAGE;
-        int end = min(start + ITEMS_PER_PAGE, (int)items.size());
-
-        for (int i = start; i < end; i++) {
-            space();
-            cout << "\t  ";
-            cout << left << setw(20) << ("ID: " + to_string(items[i].id)) 
-                 << setw(30) << ("Name: " + items[i].name)
-                 << setw(20) << ("Quantity: " + to_string(items[i].quantity));
-            space();
-            print_gradient(line_str('~'), 35, 40);
-        }
-
-        
-        space();
-        cout << Color::gray << "Page " << (currentPage + 1) << " of " << totalPages << Color::reset;
-        space();
-        print_input_box(20, 0, {Config::color_theme}, "command", false, "left");
-
-        cin >> command;
-
-        // Handle navigation
-        if (right_key(command)) {
-            if (currentPage < totalPages - 1) currentPage++;
-        }
-        else if (db_right_key(command)) {
-            currentPage = min(currentPage + 2, totalPages - 1);
-        }
-        else if (tri_right_key(command)) {
-            currentPage = totalPages - 1;
-        }
-        else if (left_key(command)) {
-            if (currentPage > 0) currentPage--;
-        }
-        else if (db_left_key(command)) {
-            currentPage = max(currentPage - 2, 0);
-        }
-        else if (tri_left_key(command)) {
-            currentPage = 0;
-        }
-    }
-    while (!exit_key(command) && !back_key(command));
-}
 //user's all requests only
 void readMyRequest(int id) {
     clearScreen();
@@ -1133,6 +1222,8 @@ void adminDashboard(int id,string name ,string username, string department, stri
     Item item;
 
     do{
+        clearScreen();
+
         print_gradient(line_str('='), 203, 207);
 
         print_triple_text("Name: " + name + "(" + username + ")", "Access: " + userAccess, "Department: " + department, 2);
@@ -1305,7 +1396,9 @@ void adminDashboard(int id,string name ,string username, string department, stri
 
             clearScreen();
             cout << "Logging out of admin dashboard...\n";
-
+            Sleep(3000);
+            clearScreen();
+            return;
         }
 
         else {
@@ -1317,7 +1410,9 @@ void adminDashboard(int id,string name ,string username, string department, stri
 
         }
     }
-    while(exit_key(choice) || back_key(choice));
+    while(!exit_key(choice) || !back_key(choice));
+    return;
+
 }
 
 void userDashboard(int id, string name ,string username, string department, string userAccess ,string password){

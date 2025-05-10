@@ -198,7 +198,7 @@ inline void returned_items_remove(const std::string& key) {
 //? ------ DELETE ITEMS KEYBINDS ------
 
 inline std::vector<std::string>& delete_items_keybinds() {
-    static std::vector<std::string> keybinds = {"delete items"};
+    static std::vector<std::string> keybinds = {"delete item", "delete item"};
     return keybinds;
 }
 
