@@ -614,54 +614,72 @@ void readReturnItems() {
 
  //return all items
 void readItems() {
-
-    /*
-    
-
-
-        sample:
-                    Sean        Calinao         Philippines
-                    Ethel       Tabios          America
-                    Naomi       Bertiz                 
-
-    */
-
-   
     clearScreen();
-    cout << " <<" << string(term_width * 0.40, ' ') <<" All Items " << string(term_width * 0.38, ' ') << " >>\n";
+    cout << " <<" << string(term_width * 0.40, ' ') << " All Items " << string(term_width * 0.38, ' ') << " >>\n";
 
+    vector<Item> items;
     ifstream file("item.txt");
     Item item;
+
+    // Read all items into vector
+    while (file >> item.id >> item.name >> item.quantity) {
+        items.push_back(item);
+    }
+    file.close();
+
+    const int ITEMS_PER_PAGE = 7;
+    int currentPage = 0;
+    int totalPages = (items.size() + ITEMS_PER_PAGE - 1) / ITEMS_PER_PAGE;
     string command;
 
-    if (file.is_open()) {
-        do{
+    do {
+        clearScreen();
+        cout << " <<" << string(term_width * 0.40, ' ') <<" All Items " << string(term_width * 0.38, ' ') << " >>\n";
+        print_gradient(line_str('~'), 35, 40);
 
-            print_gradient(line_str('-'), 35, 40);
+        // Display items for current page
+        int start = currentPage * ITEMS_PER_PAGE;
+        int end = min(start + ITEMS_PER_PAGE, (int)items.size());
 
-            // TODO: Allow pagination, so the user can only see a limited amount but can scroll through
-
-            while (file >> item.id >> item.name>> item.quantity) {
-
-                space();
-                cout<< "\t  ";
-                cout << left << setw(20) << ("ID: " + to_string(item.id)) 
-                     << setw(30) << ("Name: " + item.name)
-                     << setw(20) << ("Quantity: " + to_string(item.quantity));
-                space();
-
-                print_gradient(line_str('-'), 35, 40);
-                
-            }
-            file.close();
-
+        for (int i = start; i < end; i++) {
             space();
-            print_input_box(20, 0, {Config::color_theme}, "command", false, "left");
-            cin >> command;
+            cout << "\t  ";
+            cout << left << setw(20) << ("ID: " + to_string(items[i].id)) 
+                 << setw(30) << ("Name: " + items[i].name)
+                 << setw(20) << ("Quantity: " + to_string(items[i].quantity));
+            space();
+            print_gradient(line_str('~'), 35, 40);
         }
-        while(exit_key(command) || back_key(command));
+
+        
+        space();
+        cout << Color::gray << "Page " << (currentPage + 1) << " of " << totalPages << Color::reset;
+        space();
+        print_input_box(20, 0, {Config::color_theme}, "command", false, "left");
+
+        cin >> command;
+
+        // Handle navigation
+        if (right_key(command)) {
+            if (currentPage < totalPages - 1) currentPage++;
+        }
+        else if (db_right_key(command)) {
+            currentPage = min(currentPage + 2, totalPages - 1);
+        }
+        else if (tri_right_key(command)) {
+            currentPage = totalPages - 1;
+        }
+        else if (left_key(command)) {
+            if (currentPage > 0) currentPage--;
+        }
+        else if (db_left_key(command)) {
+            currentPage = max(currentPage - 2, 0);
+        }
+        else if (tri_left_key(command)) {
+            currentPage = 0;
+        }
     }
-    
+    while (!exit_key(command) && !back_key(command));
 }
 //user's all requests only
 void readMyRequest(int id) {

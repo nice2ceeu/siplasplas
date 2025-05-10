@@ -44,7 +44,8 @@ void print_label_box(
 
 string line_title_str(const string text, const char symbol);
 string centered_str(const string &text, const int side = 0);
-string line_str(const char symbol);
+string line_str(const char symbol = '-');
+string line_str(const string& pattern = "─");
 string convert_case(const string &subject, const string &option = "");
 
 extern int term_width;

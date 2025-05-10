@@ -285,6 +285,16 @@ string line_str(const char symbol){
     return string(term_width, symbol);
 }
 
+// Overloaded version that takes a string
+string line_str(const string& pattern){
+    string result;
+    while (result.length() < static_cast<size_t>(term_width)) {
+        result += pattern;
+    }
+    // Trim to exact width if pattern repetition went over
+    return result.substr(0, term_width);
+}
+
 // CHANGE A STRING'S CASE
 string convert_case(const string &subject, const string &option) {
     string result = subject;
