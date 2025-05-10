@@ -98,8 +98,8 @@ void open_settings();
 void addUser(const User& user);
 void addItem(const Item&item);
 
-void readUsers();
-void readItems();
+void readUsers(const string guide = "None");
+void readItems(const string guide = "None");
 
 void readAllUserRequest();
 void readMyRequest(int id);
@@ -564,7 +564,7 @@ void cancelItems(int idToCancel) {
 }
 
 
-void readUsers() {
+void readUsers(const string guide) {
     clearScreen();
     vector<User> users;
     ifstream file("data.txt");
@@ -649,7 +649,7 @@ void readUsers() {
 }
 
 //return all items
-void readItems() {
+void readItems(const string guide) {
     clearScreen();
 
     vector<Item> items;
@@ -1250,7 +1250,6 @@ void adminDashboard(int id,string name ,string username, string department, stri
 
             TODO: Logout function will be moved to the account settings as there is no more space here
             TODO: Some functions need its own page, a command input for user so the page stays (all other similar ones too)
-            TODO: A UI for displaying datas from the database
 
         */
 

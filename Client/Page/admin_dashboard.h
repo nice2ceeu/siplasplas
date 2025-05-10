@@ -24,7 +24,7 @@ inline std::string to_lower_dashboard(std::string s) {
 //? ------ SHOW ITEMS KEYBINDS ------ 
 
 inline std::vector<std::string>& show_items_keybinds() {
-    static std::vector<std::string> keybinds = {"show items"};
+    static std::vector<std::string> keybinds = {"show items", "show item"};
     return keybinds;
 }
 
@@ -82,7 +82,7 @@ inline void show_users_remove(const std::string& key) {
 //? ------ ADD ITEMS KEYBINDS ------
 
 inline std::vector<std::string>& add_item_keybinds() {
-    static std::vector<std::string> keybinds = {"add items"};
+    static std::vector<std::string> keybinds = {"add items", "add item"};
     return keybinds;
 }
 
