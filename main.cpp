@@ -617,7 +617,7 @@ void readItems() {
 
     /*
     
-        TODO: A UI function for printing three text in a pre-define position regardless of length
+
 
         sample:
                     Sean        Calinao         Philippines
@@ -639,6 +639,8 @@ void readItems() {
 
             print_gradient(line_str('-'), 35, 40);
 
+            // TODO: Allow pagination, so the user can only see a limited amount but can scroll through
+
             while (file >> item.id >> item.name>> item.quantity) {
 
                 space();
@@ -653,6 +655,7 @@ void readItems() {
             }
             file.close();
 
+            space();
             print_input_box(20, 0, {Config::color_theme}, "command", false, "left");
             cin >> command;
         }

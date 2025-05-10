@@ -127,12 +127,26 @@ inline std::vector<std::string>& db_left_keybinds() {
     static std::vector<std::string> keybinds = {"<<", "{{", "aa", "44"};
     return keybinds;
 }
+
+inline bool db_left_key(std::string input) {
+    input = to_lower(input);
+    const auto keybinds = db_left_keybinds();
+    
+    for(const auto& key : keybinds) {
+        if(input == key) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+// RIGHT KEYBINDS
 inline std::vector<std::string>& right_keybinds() {
     static std::vector<std::string> keybinds = {">", "}", "d", "6"};
     return keybinds;
 }
 
-// RIGHT KEYBINDS
 inline bool right_key(std::string input) {
     input = to_lower(input);
     const auto keybinds = right_keybinds();
@@ -153,7 +167,7 @@ inline std::vector<std::string>& db_right_keybinds() {
 
 inline bool db_right_key(std::string input) {
     input = to_lower(input);
-    const auto keybinds = right_keybinds();
+    const auto keybinds = db_right_keybinds();
     
     for(const auto& key : keybinds) {
         if(input == key) {
@@ -162,6 +176,42 @@ inline bool db_right_key(std::string input) {
     }
     return false;
 }
+
+// TRIPLE LEFT KEYBINDS
+inline std::vector<std::string>& tri_left_keybinds() {
+    static std::vector<std::string> keybinds = {"<<<", "{{{", "aaa", "444"};
+    return keybinds;
+}
+inline bool tri_left_key(std::string input) {
+    input = to_lower(input);
+    const auto keybinds = tri_left_keybinds();
+    
+    for(const auto& key : keybinds) {
+        if(input == key) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// TRIPLE RIGHT KEYBINDS
+inline std::vector<std::string>& tri_right_keybinds() {
+    static std::vector<std::string> keybinds = {">>>", "}}}", "ddD", "666"};
+    return keybinds;
+}
+
+inline bool tri_right_key(std::string input) {
+    input = to_lower(input);
+    const auto keybinds = tri_right_keybinds();
+    
+    for(const auto& key : keybinds) {
+        if(input == key) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 
 //?  ---------------- KEYBINDS MANAGEMENT ----------------
@@ -257,6 +307,19 @@ inline void db_left_remove(const std::string& key) {
     keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
 }
 
+//  Triple Left keybinds management
+inline void tri_left_add(const std::string& key) {
+    auto& keybinds = tri_left_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower(key));
+    }
+}
+
+inline void tri_left_remove(const std::string& key) {
+    auto& keybinds = tri_left_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+}
+
 // Right keybinds management
 inline void right_add(const std::string& key) {
     auto& keybinds = right_keybinds();
@@ -280,6 +343,19 @@ inline void db_right_add(const std::string& key) {
 
 inline void db_right_remove(const std::string& key) {
     auto& keybinds = db_right_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
+}
+
+// Triple Right keybinds management
+inline void tri_right_add(const std::string& key) {
+    auto& keybinds = tri_right_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower(key));
+    }
+}
+
+inline void tri_right_remove(const std::string& key) {
+    auto& keybinds = tri_right_keybinds();
     keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower(key)), keybinds.end());
 }
 
