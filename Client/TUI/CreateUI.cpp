@@ -511,7 +511,7 @@ void print_label_box(
          << string((width_actual - label.length()) / 2, ' ') 
          << label 
          << string((width_actual - label.length() + 1) / 2, ' ') 
-         << line_color << "ǀ\033[0m";
+         << line_color << "\033[0m" << line_color << "ǀ" << Color::reset;
 
     // Bottom border
     space(1);

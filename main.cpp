@@ -310,7 +310,7 @@ void addItem(const Item& item) {
         file << item.id << " " << item.name << " "<< item.quantity << endl;
 
         file.close();
-        cout << "Item added.\n";
+        // cout << "Item added.\n";
     }
 }
 
@@ -614,6 +614,8 @@ void readUsers(const string guide) {
             cout << Color::reset;
             space();
             print_gradient(line_str('_'), 35, 40);
+
+            Sleep(30);
         }
 
         space(2);
@@ -691,6 +693,8 @@ void readItems(const string guide) {
             setColor(7);
             space();
             print_gradient(line_str('_'), 35, 40);
+
+            Sleep(30);
         }
 
         space(2);
@@ -1269,13 +1273,39 @@ void adminDashboard(int id,string name ,string username, string department, stri
 
         else if(add_item_key(choice)) {
             clearScreen();
+
+            space();
+            line_title("Adding Item", '=', Color::light_cyan, Color::yellow);
+            space();
+            
             item.id = getLastItemId() + 1;
-            cout << "Name of Item (dash separated if multiple words): ";
+            
+            print_label_box("ID: #00" + to_string(item.id), 78, -1, Color::light_yellow, Color::black, Color::bg_white);
+            space(2);
+            print_input_box(20, 0, Color::white, "name", false);
+            space(2);
+            print_input_box(20, 0, Color::white, "quantity", false);
+ 
+            space(2);
+            print_line('=', Color::light_cyan);
+
+            // Exit Key
+            cout << Color::gray << "\nExit: " << "\e[0m";
+            for(string key : exit_keybinds()){
+                cout << Color::gray << key <<  " \e[0m";
+            }
+
+            // Back Key
+            cout << Color::gray << "\nBack: " << "\e[0m";
+            for(string key : back_keybinds()){
+                cout << Color::gray << key <<  " \e[0m";
+            }
+
             cin.ignore();
             getline(cin, item.name);
-            cout << "Enter quantity: ";
             cin >> item.quantity;
             addItem(item);
+
             continue;
         }
 
