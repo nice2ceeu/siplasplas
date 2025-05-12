@@ -205,8 +205,8 @@ void print_error(const string &text, const int side){
 }
 
 // ADD A LINE TO THE TERMINAL
-void print_line(const char symbol, const string &color){
-    cout << color << string(term_width, symbol) << "\n\e[0m" << endl;
+void print_line(const char symbol, const string &color, const string &text_color){
+    cout << color << text_color << string(term_width, symbol) << Color::reset;
 }
 // Line with Text (returns string)
 string line_title_str(const string text, const char symbol){

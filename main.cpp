@@ -427,7 +427,6 @@ void returnItem(int idToReturn) {
 
 //approbing
 void approveRequest(int idToBorrow) {
-    clearScreen();
     string borrowDate = getCurrentDate();
     int toDeduct;
 
@@ -824,20 +823,153 @@ void readMyBorrow(int id) {
     cout << "--------------------------------" << endl;
 }
 //admin side
-void readAllUserRequest(){
-	clearScreen();
-	cout << "All User Request"<< endl;
-	ifstream file("requestItem.txt");
-	int num = 0;
-	RequestItem req;
-    if (file.is_open()) {
-        while (file >>req.reqId >>req.itemId >> req.itemName>> req.itemQuan>> req.borrowerId >>req.borrowerName>> req.date) {
-        	num++;
-            cout <<  "Req. ID# "<<req.reqId<<", Item ID: " << req.itemId << ", Item Name: " << req.itemName << " Quantity: " 
-			<< req.itemQuan << ", Borrower's Name: "<<req.borrowerName<< ", Borrower's ID: "<< req.borrowerId<< ", Date: "<< req.date << endl;
-		}
-	}cout <<"--------------------------------"<< endl;
+void readAllUserRequest() {
+    clearScreen();
+    vector<RequestItem> requests;
+    ifstream file("requestItem.txt");
+    RequestItem req;
+
+    // Read all requests into vector
+    while (file >> req.reqId >> req.itemId >> req.itemName 
+           >> req.itemQuan >> req.borrowerId >> req.borrowerName >> req.date) {
+        requests.push_back(req);
+    }
+    file.close();
+
+    const int REQUESTS_PER_PAGE = 3;
+    int currentPage = 0;
+    int totalPages = (requests.size() + REQUESTS_PER_PAGE - 1) / REQUESTS_PER_PAGE;
+    string command;
+    bool refetch = false;
+
+    do {
+        if(refetch){
+            requests.clear();
+            ifstream file("requestItem.txt");
+
+            // Read all requests into vector
+            while (file >> req.reqId >> req.itemId >> req.itemName 
+                >> req.itemQuan >> req.borrowerId >> req.borrowerName >> req.date) {
+                requests.push_back(req);
+            }
+            file.close();
+
+            currentPage = 0;
+            totalPages = (requests.size() + REQUESTS_PER_PAGE - 1) / REQUESTS_PER_PAGE;
+            refetch = false;
+        }
+
+        clearScreen();
+        // Display requests for current page
+        int start = currentPage * REQUESTS_PER_PAGE;
+        int end = min(start + REQUESTS_PER_PAGE, (int)requests.size());
+
+        for (int i = start; i < end; i++) {
+            
+            line_title("Request ID: #" + to_string(requests[i].reqId), ' ', Color::bg_light_yellow, Color::black);
+
+            space();
+            cout << "\t";
+            cout << Color::cyan;
+            cout << left << setw(20) << ("Item ID: " + to_string(requests[i].itemId));
+            
+            cout << Color::yellow;
+            cout << setw(25) << ("Item: " + requests[i].itemName);
+            
+            cout << Color::light_magenta; 
+            cout << setw(15) << ("Qty: " + to_string(requests[i].itemQuan));
+            
+            space();
+            cout << "\t";
+            
+            cout << Color::light_green;
+            cout << left << setw(20) << ("Account ID: " + to_string(requests[i].borrowerId));
+
+            cout << Color::white;
+            cout << setw(25) << ("Borrower: " + requests[i].borrowerName);
+            
+            cout << Color::light_red;
+            cout << setw(15) << ("Date: " + requests[i].date);
+
+            cout << Color::reset;
+            space(2);
+            print_line('_', Color::bg_light_yellow, Color::black);
+            Sleep(30);
+        }
+
+        space(2);
+        print("Command: ", -28);
+        print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
+        cout << "\033[54D";
+        cin >> command;
+
+        // EXIT
+        if(exit_key(command) || back_key(command)) break;
+
+        if(isdigit(command[0])) { 
+            int reqId = stoi(command);
+            ifstream checkFile("requestItem.txt");
+            RequestItem req;
+            bool found = false;
+
+            while (checkFile >> req.reqId >> req.itemId >> req.itemName >> req.itemQuan 
+                   >> req.borrowerId >> req.borrowerName >> req.date) {
+                if (req.reqId == reqId) {
+                    found = true;
+                    break;
+                }
+            }
+            checkFile.close();
+
+            if(found) {
+                // TODO: Handle the response of this function, It gives three request depending on the status of approval
+                approveRequest(reqId);
+                set_cursor(0, 17);
+                print("      Request ID #" + command + " Approved!      ", 0, {Color::bg_light_green, Color::black});
+                Sleep(2000);
+                refetch = true;
+                continue;
+
+            } else {
+                set_cursor(0, 17);
+                print("      Invalid Request ID      ", 0, {Color::bg_red, Color::white});
+                Sleep(2000); 
+                continue;
+            }
+        }
+        
+        // Handle navigation
+        if (right_key(command)) {
+            if (currentPage < totalPages - 1) currentPage++;
+        }
+        else if (db_right_key(command)) {
+            currentPage = min(currentPage + 2, totalPages - 1);
+        }
+        else if (tri_right_key(command)) {
+            currentPage = totalPages - 1;
+        }
+        else if (left_key(command)) {
+            if (currentPage > 0) currentPage--;
+        }
+        else if (db_left_key(command)) {
+            currentPage = max(currentPage - 2, 0);
+        }
+        else if (tri_left_key(command)) {
+            currentPage = 0;
+        }
+        else{
+            set_cursor(0, 17);
+            print("      Invalid Command      ", 0, {Color::bg_red, Color::white});
+            Sleep(2000);
+        }
+        
+    }
+    while (!exit_key(command) && !back_key(command));
+    clearScreen();
+    cin.ignore();
+    return;
 }
+
 void readAllBorrowedItem(){
 	clearScreen();
 	cout << "All Borrowed Item"<< endl;
@@ -1218,7 +1350,6 @@ void adminDashboard(int id,string name ,string username, string department, stri
 	clearScreen();
     int action;
     int action2;
-	int approveId;
     string choice;  // Initializings
     int deleteId;
     int returnId;
@@ -1289,6 +1420,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
     
                 space(2);
                 print_line('=', Color::light_cyan);
+                space();
 
                 // Exit Key
                 cout << Color::gray << "\nExit: " << "\e[0m";
@@ -1375,6 +1507,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
                 
                 space(2);
                 print_line('=', Color::light_cyan);
+                space();
 
                 // Exit Key
                 cout << Color::gray << "\nExit: " << "\e[0m";
@@ -1407,18 +1540,6 @@ void adminDashboard(int id,string name ,string username, string department, stri
         else if(borrow_request_key(choice)) {
 
             readAllUserRequest();
-            cout << "Enter Operation\n1- Approve 0- DashBoard\nAction: ";
-
-            cin>> action;
-            if(action ==1){
-                cout << "Enter Req. ID to Approve: ";
-                cin>> approveId;
-                approveRequest(approveId);
-            }
-            else if(action == 0){
-                clearScreen();
-            }
-
             continue;
         } 
 
@@ -1709,6 +1830,7 @@ int main() {
             
             set_cursor(0, 13);
             print_line(exit_line, exit_color);
+            space();
             
             set_cursor(37, 17);
             Sleep(3000);
