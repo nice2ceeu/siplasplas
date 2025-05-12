@@ -304,7 +304,6 @@ void addUser(const User& user) {
 }
 //Item ADder
 void addItem(const Item& item) {
-	clearScreen();
     ofstream file("item.txt", ios::app);
     if (file.is_open()) {
         file << item.id << " " << item.name << " "<< item.quantity << endl;
@@ -694,7 +693,7 @@ void readItems(const string guide) {
             space();
             print_gradient(line_str('_'), 35, 40);
 
-            Sleep(30);
+            Sleep(15);
         }
 
         space(2);
@@ -1272,40 +1271,135 @@ void adminDashboard(int id,string name ,string username, string department, stri
         }
 
         else if(add_item_key(choice)) {
-            clearScreen();
 
-            space();
-            line_title("Adding Item", '=', Color::light_cyan, Color::yellow);
-            space();
-            
-            item.id = getLastItemId() + 1;
-            
-            print_label_box("ID: #00" + to_string(item.id), 78, -1, Color::light_yellow, Color::black, Color::bg_white);
-            space(2);
-            print_input_box(20, 0, Color::white, "name", false);
-            space(2);
-            print_input_box(20, 0, Color::white, "quantity", false);
- 
-            space(2);
-            print_line('=', Color::light_cyan);
+            do{
+                clearScreen();
+                    
+                space();
+                line_title("Adding Item", '=', Color::light_cyan, Color::yellow);
+                space();
+                
+                item.id = getLastItemId() + 1;
+                
+                print_label_box("ID: #00" + to_string(item.id), 78, -1, Color::light_yellow, Color::black, Color::bg_white);
+                space(2);
+                print_input_box(20, 0, Color::white, "name", false);
+                space(2);
+                print_input_box(20, 0, Color::white, "quantity", false);
+    
+                space(2);
+                print_line('=', Color::light_cyan);
 
-            // Exit Key
-            cout << Color::gray << "\nExit: " << "\e[0m";
-            for(string key : exit_keybinds()){
-                cout << Color::gray << key <<  " \e[0m";
+                // Exit Key
+                cout << Color::gray << "\nExit: " << "\e[0m";
+                for(string key : exit_keybinds()){
+                    cout << Color::gray << key <<  " \e[0m";
+                }
+                
+                // Back Key
+                cout << Color::gray << "\nReset: " << "\e[0m";
+                for(string key : back_keybinds()){
+                    cout << Color::gray << key <<  " \e[0m";
+                }
+
+                set_cursor(31, 8);
+                getline(cin, item.name);
+                if(exit_key(item.name)) break;
+                if(back_key(item.name)) continue;
+                
+                set_cursor(31, 12);
+                string quantityStr;
+                getline(cin, quantityStr);
+                if(exit_key(quantityStr)) break;
+                if(back_key(quantityStr)) continue;
+
+                set_cursor(0, 17);
+                print("           Adding Item           ", 0, {Color::bg_cyan, Color::black});
+                Sleep(2000);
+
+                // Check for spaces in name
+                if(item.name.find(' ') != string::npos) {
+                    set_cursor(0, 17); 
+                    print("  Use dash '-' for multiple words  ", 0, {Color::bg_light_red, Color::black});
+                    Sleep(3000);
+                    continue;
+                }
+
+                // Check for numbers in name
+                bool hasNumber = false;
+                for(char c : item.name) {
+                    if(isdigit(c)) {
+                        hasNumber = true;
+                        break;
+                    }
+                }
+                if(hasNumber) {
+                    set_cursor(0, 17);
+                    print("  Item name cannot contain numbers  ", 0, {Color::bg_light_red, Color::black});
+                    Sleep(3000);
+                    continue;
+                }
+
+                // Check if quantity is a number
+                bool isNumber = true;
+                for(char c : quantityStr) {
+                    if(!isdigit(c)) {
+                        isNumber = false;
+                        break;
+                    }
+                }
+                if(!isNumber) {
+                    set_cursor(0, 17);
+                    print("    Quantity must be a number    ", 0, {Color::bg_light_red, Color::black});
+                    Sleep(3000);
+                    continue;
+                }
+                
+                item.quantity = stoi(quantityStr);
+
+                Sleep(3000);
+
+                // RERENDER PAGE
+                clearScreen();
+                space();
+                line_title("Adding Item", '=', Color::light_cyan, Color::yellow);
+                space();
+                
+                item.id = getLastItemId() + 1;
+                
+                print_label_box("ID: #00" + to_string(item.id), 78, -1, Color::yellow, Color::black, Color::bg_light_green);
+                space(2);
+                print_input_box(20, 0, Color::white, "name", false);
+                space(2);
+                print_input_box(20, 0, Color::white, "quantity", false);
+                
+                space(2);
+                print_line('=', Color::light_cyan);
+
+                // Exit Key
+                cout << Color::gray << "\nExit: " << "\e[0m";
+                for(string key : exit_keybinds()){
+                    cout << Color::gray << key <<  " \e[0m";
+                }
+                
+                // Back Key
+                cout << Color::gray << "\nReset: " << "\e[0m";
+                for(string key : back_keybinds()){
+                    cout << Color::gray << key <<  " \e[0m";
+                }
+                
+                set_cursor(31, 8);
+                cout << item.name;
+                set_cursor(31, 12);
+                cout << item.quantity;
+                set_cursor(0, 17);
+                print("     Item Added Successfully     ", 0, {Color::bg_bright_green, Color::black});
+                addItem(item);
+                Sleep(3000);
+                break;
             }
-
-            // Back Key
-            cout << Color::gray << "\nBack: " << "\e[0m";
-            for(string key : back_keybinds()){
-                cout << Color::gray << key <<  " \e[0m";
-            }
-
-            cin.ignore();
-            getline(cin, item.name);
-            cin >> item.quantity;
-            addItem(item);
-
+            while(true);
+            
             continue;
         }
 
