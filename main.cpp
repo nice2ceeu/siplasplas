@@ -461,7 +461,11 @@ void approveRequest(int idToBorrow) {
             while (inFile2 >> item.id >> item.name >> item.quantity) {
                 if (item.id == req.itemId) {
                     if (req.itemQuan > item.quantity) {
-                        cout << "Insufficient stocks.\n";
+
+                        set_cursor(0, 17);
+                        print("      Insufficient Stocks      ", 0, {Color::bg_light_green, Color::black});
+                        Sleep(2000);
+
                         insufficientStock = true;
                     } else {
                         toDeduct = item.quantity - req.itemQuan;
@@ -503,14 +507,24 @@ void approveRequest(int idToBorrow) {
         remove("item.txt");
         rename("temp.txt", "requestItem.txt");
         rename("tempItem.txt", "item.txt");
-        cout << "Item with request ID " << idToBorrow << " has been borrowed and moved to borrowedItem.txt.\n";
+
+        set_cursor(0, 17);
+        print("      Request ID #" + to_string(idToBorrow) + " Approved!      ", 0, {Color::bg_light_green, Color::black});
+        Sleep(2000);
+
     } else if (found && insufficientStock) {
         remove("temp.txt");
         remove("tempItem.txt");
-        cout << "Borrowing failed due to insufficient stocks.\n";
+
+        set_cursor(0, 17);
+        print("        Borrowing failed due to insufficient stocks.        ", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
+
     } else {
         remove("temp.txt");
-        cout << "Request ID " << idToBorrow << " not found.\n";
+        set_cursor(0, 17);
+        print("        Request ID " + to_string(idToBorrow) + " not found.        ", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
     }
 }
 
@@ -924,9 +938,6 @@ void readAllUserRequest() {
             if(found) {
                 // TODO: Handle the response of this function, It gives three request depending on the status of approval
                 approveRequest(reqId);
-                set_cursor(0, 17);
-                print("      Request ID #" + command + " Approved!      ", 0, {Color::bg_light_green, Color::black});
-                Sleep(2000);
                 refetch = true;
                 continue;
 
