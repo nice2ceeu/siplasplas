@@ -98,7 +98,7 @@ void open_settings();
 void addUser(const User& user);
 void addItem(const Item&item);
 
-void readUsers(const string guide = "None");
+void readUsers(const bool isDelete = false);
 void readItems(const bool isDelete = false);
 
 void readAllUserRequest();
@@ -582,8 +582,11 @@ void cancelItems(int idToCancel) {
 }
 
 
-void readUsers(const string guide) {
+void readUsers(const bool isdelete) {
     clearScreen();
+
+    bool refetch = false;
+
     vector<User> users;
     ifstream file("data.txt");
     User user;
@@ -600,6 +603,21 @@ void readUsers(const string guide) {
     string command;
 
     do {
+
+        if(refetch){
+            users.clear();
+            ifstream file("data.txt");
+            User user;
+
+            // Read all users into vector
+            while (file >> user.id >> user.name >> user.username >> user.password >> user.dept >> user.userAccess) {
+                users.push_back(user);
+            }
+            file.close();
+
+            refetch = false;
+        }
+
         clearScreen();
         cout << " <<" << string(term_width * 0.40, ' ') << " All Users " << string(term_width * 0.38, ' ') << " >>\n";
         print_gradient(line_str('_'), 35, 40);
@@ -641,25 +659,43 @@ void readUsers(const string guide) {
         print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
         cout << "\033[54D";
         cin >> command;
+        if(exit_key(command) || back_key(command)) break;
 
         // Handle navigation
         if (right_key(command)) {
             if (currentPage < totalPages - 1) currentPage++;
+            continue;
         }
         else if (db_right_key(command)) {
             currentPage = min(currentPage + 2, totalPages - 1);
+            continue;
         }
         else if (tri_right_key(command)) {
             currentPage = totalPages - 1;
+            continue;
         }
         else if (left_key(command)) {
             if (currentPage > 0) currentPage--;
+            continue;
         }
         else if (db_left_key(command)) {
             currentPage = max(currentPage - 2, 0);
+            continue;
         }
         else if (tri_left_key(command)) {
             currentPage = 0;
+            continue;
+        }
+
+        if(isdigit(command[0])){
+            deleteUser(stoi(command));
+            refetch = true;
+            continue;
+        }
+        else {
+            set_cursor(0, 17);
+            print("      Invalid Command      ", 0, {Color::bg_light_red, Color::black});
+            Sleep(2000);
         }
     }
     while (!exit_key(command) && !back_key(command));
@@ -1255,17 +1291,19 @@ void readMyCancelled(int id) {
 
 //deleting user(admin side)
 void deleteUser(int idToDelete) {
-    clearScreen();
-
     ifstream inFile("data.txt");
     if (!inFile) {
-        cerr << "Error: Unable to open data.txt for reading.\n";
+        set_cursor(0, 17);
+        print("      Unable to open data.txt for reading      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         return;
     }
 
     ofstream outFile("temp.txt");
     if (!outFile) {
-        cerr << "Error: Unable to open temp.txt for writing.\n";
+        set_cursor(0, 17);
+        print("      Unable to open temp.txt for writing      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         inFile.close();
         return;
     }
@@ -1276,7 +1314,9 @@ void deleteUser(int idToDelete) {
    	while (inFile >> user.id >> user.name >> user.username >> user.password >> user.dept >> user.userAccess) {
 	    if (user.id == idToDelete) {
 	        if (user.userAccess == "admin" || user.userAccess == "ADMIN" || user.userAccess == "Admin") {
-	            cout << "Can't delete Admin user: " << endl;
+                set_cursor(0, 17);
+                print("      Can't delete Admin user      \n", 0, {Color::bg_light_red, Color::black});
+                Sleep(2000);
 	            return;
 	        }
 	        found = true; 
@@ -1293,29 +1333,44 @@ void deleteUser(int idToDelete) {
 	ifstream check("data.txt");
 	check.close();
 	if (check.is_open()) {
-	    cout << "data.txt is still open somehow before remove().\n";
+        set_cursor(0, 17);
+        print("      data.txt is still open somehow before remove()      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
 	} else {
-	    cout << "data.txt appears to be closed.\n";
+        set_cursor(0, 17);
+        print("      data.txt appears to be closed      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
 	}
 	check.close();
 	
     if (found) {
     
     if (remove("data.txt") != 0) {
-        perror("Error deleting original data file");
+        set_cursor(0, 17);
+        print("      Error deleting original data file      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         return;
     }
     
     if (rename("temp.txt", "data.txt") != 0) {
-        perror("Error renaming temp file to data.txt");
+        set_cursor(0, 17);
+        print("      Error renaming temp file to data.txt      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         return;
     }
-    cout << "User deleted successfully.\n";
+    cout << ".\n";
+    set_cursor(0, 17);
+    print("                  User deleted successfully                  \n", 0, {Color::bg_green, Color::black});
+    Sleep(2000);
 }
 	 else {
-        cout << "User not found.\n";
+        set_cursor(0, 17);
+        print("      User not found      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         if (remove("temp.txt") != 0) {
-            perror("Error deleting temporary file");
+            set_cursor(0, 17);
+            print("      Error deleting temporary file      \n", 0, {Color::bg_light_red, Color::black});
+            Sleep(2000);
         }
     }
 }
@@ -1613,7 +1668,6 @@ void adminDashboard(int id,string name ,string username, string department, stri
 	clearScreen();
     int action;
     string choice;  // Initializings
-    int deleteId;
     Item item;
 
     do{
@@ -1644,7 +1698,6 @@ void adminDashboard(int id,string name ,string username, string department, stri
         /* 
 
             TODO: Logout function will be moved to the account settings as there is no more space here
-            TODO: Some functions need its own page, a command input for user so the page stays (all other similar ones too)
 
         */
 
@@ -1824,11 +1877,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
 
         else if(delete_user_key(choice)) {
 
-            clearScreen();
-            readUsers();
-            cout << "Enter ID to delete user: ";
-            cin >> deleteId;
-            deleteUser(deleteId);
+            readUsers(true);   
             continue;
 
         }

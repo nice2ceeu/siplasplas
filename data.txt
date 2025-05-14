@@ -4,6 +4,4 @@
 5 kristoffer kris toff cs-department user
 6 kristoffer nice 2ceeu it-dep admin
 7 Kc-Sean Sean-Brix 121802 IT-DEPT. admin
-8 Israel esRL 121802 IT-Department user
 9 Ethel itsitelt 121802 IT-Department admin
-10 Thea althea 121802 HR-Department user
