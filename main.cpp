@@ -774,22 +774,102 @@ void changePass(int id, string confirmedPass){
 // show returned Itemsss
 void readReturnItems() {
     clearScreen();
-        ifstream file("returnRecord.txt"); 
-        ReturnedItem returned;
-        if (file.is_open()) {
-            while (file >> returned.itemId >> returned.itemName >> returned.itemQuan >> 
-			returned.borrowerId >> returned.borrowerName>> returned.borrowDate>>returned.dateReturn) {
-            		cout << "ID: " <<  returned.itemId << 
-					", Item Name: " << returned.itemName << 
-					", Quantity: " << returned.itemQuan << 
-					", Name: " << returned.borrowerName << 
-					", Borrower ID: " << returned.borrowerId << 
-					", Date of borrow: " << returned.borrowDate << 
-					", Return Date: "<< returned.dateReturn<< endl;   
-            }
-           file.close();
+    vector<ReturnedItem> returns;
+    ifstream file("returnRecord.txt");
+    ReturnedItem returned;
+
+    // Read all returns into vector
+    while (file >> returned.itemId >> returned.itemName >> returned.itemQuan >> 
+           returned.borrowerId >> returned.borrowerName >> returned.borrowDate >> returned.dateReturn) {
+        returns.push_back(returned);
+    }
+    file.close();
+
+    const int RETURNS_PER_PAGE = 3;
+    int currentPage = 0;
+    int totalPages = (returns.size() + RETURNS_PER_PAGE - 1) / RETURNS_PER_PAGE;
+    string command;
+
+    do {
+        clearScreen();
+        // Display returns for current page
+        int start = currentPage * RETURNS_PER_PAGE;
+        int end = min(start + RETURNS_PER_PAGE, (int)returns.size());
+
+        // TODO: FIX RECORD HEADER to have both the return ID and the returned date
+        for (int i = start; i < end; i++) {
+            line_title("Return Record #" + to_string(returns[i].itemId), ' ', Color::bg_light_magenta, Color::black);
+            cout << "Return Record #" + to_string(returns[i].itemId) << string(' ', 40) << "Return Date: " + returns[i].dateReturn;
+
+            space();
+            cout << "\t";
+            cout << Color::cyan;
+            cout << left << setw(20) << ("Item ID: " + to_string(returns[i].itemId));
+            
+            cout << Color::yellow;
+            cout << setw(25) << ("Item: " + returns[i].itemName);
+            
+            cout << Color::light_magenta;
+            cout << setw(15) << ("Qty: " + to_string(returns[i].itemQuan));
+            
+            space();
+            cout << "\t";
+            
+            cout << Color::light_green;
+            cout << left << setw(20) << ("Account ID: " + to_string(returns[i].borrowerId));
+            
+            cout << Color::white;
+            cout << setw(25) << ("Borrower: " + returns[i].borrowerName);
+            
+            cout << Color::light_blue;
+            cout << setw(15) << ("Borrow Date: " + returns[i].borrowDate);
+            
+            space();
+            cout << "\t";
+            
+            cout << Color::light_red;
+            cout << setw(15) << ("Return Date: " + returns[i].dateReturn);
+
+            cout << Color::reset;
+            space(2);
+            print_line('_', Color::bg_light_magenta + Color::black);
+            Sleep(30);
         }
-        cout <<"--------------------------------"<< endl;
+
+        space(2);
+        print("Command: ", -28);
+        print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
+        cout << "\033[54D";
+        getline(cin, command);
+
+        // Handle navigation
+        if (right_key(command)) {
+            if (currentPage < totalPages - 1) currentPage++;
+        }
+        else if (db_right_key(command)) {
+            currentPage = min(currentPage + 2, totalPages - 1);
+        }
+        else if (tri_right_key(command)) {
+            currentPage = totalPages - 1;
+        }
+        else if (left_key(command)) {
+            if (currentPage > 0) currentPage--;
+        }
+        else if (db_left_key(command)) {
+            currentPage = max(currentPage - 2, 0);
+        }
+        else if (tri_left_key(command)) {
+            currentPage = 0;
+        }
+        else if (!exit_key(command) && !back_key(command)) {
+            set_cursor(0, 17);
+            print("      Invalid Command      ", 0, {Color::bg_red, Color::white});
+            Sleep(2000);
+        }
+    }
+    while (!exit_key(command) && !back_key(command));
+    clearScreen();
+    return;
 } 
 
 //user's all requests only
