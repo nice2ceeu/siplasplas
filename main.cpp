@@ -796,12 +796,12 @@ void readReturnItems() {
         int start = currentPage * RETURNS_PER_PAGE;
         int end = min(start + RETURNS_PER_PAGE, (int)returns.size());
 
-        // TODO: FIX RECORD HEADER to have both the return ID and the returned date
         for (int i = start; i < end; i++) {
-            line_title("Return Record #" + to_string(returns[i].itemId), ' ', Color::bg_light_magenta, Color::black);
-            cout << "Return Record #" + to_string(returns[i].itemId) << string(' ', 40) << "Return Date: " + returns[i].dateReturn;
+            cout << Color::bg_light_magenta << Color::bold;
+            cout << " Return Record #" + to_string(returns[i].itemId) << string(39 - to_string(returns[i].itemId).length() + 1, ' ') << "Return Date: " + returns[i].dateReturn << " ";
+            cout << Color::reset;
+            space(2);
 
-            space();
             cout << "\t";
             cout << Color::cyan;
             cout << left << setw(20) << ("Item ID: " + to_string(returns[i].itemId));
@@ -824,14 +824,8 @@ void readReturnItems() {
             cout << Color::light_blue;
             cout << setw(15) << ("Borrow Date: " + returns[i].borrowDate);
             
-            space();
-            cout << "\t";
-            
-            cout << Color::light_red;
-            cout << setw(15) << ("Return Date: " + returns[i].dateReturn);
-
-            cout << Color::reset;
             space(2);
+            cout << Color::reset;
             print_line('_', Color::bg_light_magenta + Color::black);
             Sleep(30);
         }
@@ -2021,12 +2015,11 @@ int main() {
         }
         else if(exit_key(user_prompt)){
             space(1);
-            char exit_line = '~';
-            string exit_color = Color::light_red;
+            char exit_line = ' ';
+            string exit_color = Color::bg_red;
 
             set_cursor(0, 3);
             line_title("SHUTTING DOWN", exit_line, exit_color, Config::color_theme);
-            
             set_cursor(0, 13);
             print_line(exit_line, exit_color);
             space();
