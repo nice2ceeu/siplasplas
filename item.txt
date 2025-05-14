@@ -1,13 +1,13 @@
 1 paper 18
 2 pencil 50
-3 monitor 5
-4 eraser 10
+3 monitor 8
+4 eraser 17
 5 a4-bondpaper 420
-6 mangga 38
+6 mangga 39
 7 laptop 10
 8 Desktop 308
 9 Napsack 20
-10 Selfie-Stick 14
+10 Selfie-Stick 15
 11 Watch 2
 12 Headphone 7
 13 Electric-Fan 87
@@ -15,7 +15,7 @@
 15 Speaker 3
 16 Hair-Comb 25
 17 Eye-Glass 0
-18 Perfume 4
+18 Perfume 6
 19 Sunscreen 15
 20 Bag 4
 21 Notebook 26

@@ -360,7 +360,6 @@ void requestItems(int idToBorrow,int quantity,string name, int id , string date)
 
 //retorning aytim
 void returnItem(int idToReturn) {
-	clearScreen();
     // Open the necessary files
     string dateReturn = getCurrentDate();
     
@@ -371,7 +370,9 @@ void returnItem(int idToReturn) {
     ofstream returnRecord("returnRecord.txt", ios::app);
 
     if (!borrowedFile || !itemFile) {
-        cerr << "Error: Unable to open files for reading.\n";
+        set_cursor(0, 17);
+        print("      Error Opening Files      ", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         return;
     }
 
@@ -384,9 +385,9 @@ void returnItem(int idToReturn) {
                         >> borrowedItem.borrowDate) {
         if (borrowedItem.reqId == idToReturn) {
             found = true;
-			returnRecord <<borrowedItem.itemId<<" " << borrowedItem.itemName <<" "
-                        << borrowedItem.itemQuan << " "<< borrowedItem.borrowerId <<" "<< borrowedItem.borrowerName <<" "
-                        << borrowedItem.borrowDate<<" " << dateReturn<<endl;
+            returnRecord << borrowedItem.itemId << " " << borrowedItem.itemName << " "
+                        << borrowedItem.itemQuan << " " << borrowedItem.borrowerId << " " << borrowedItem.borrowerName << " "
+                        << borrowedItem.borrowDate << " " << dateReturn << endl;
                         
             while (itemFile >> item.id >> item.name >> item.quantity) {
                 if (item.id == borrowedItem.itemId) {
@@ -396,16 +397,15 @@ void returnItem(int idToReturn) {
                     tempItemFile << item.id << " " << item.name << " " << item.quantity << endl;
                 }
             }
-
             continue;
         } else {
-           
             tempBorrowedFile << borrowedItem.reqId << " " << borrowedItem.itemId << " " 
-                             << borrowedItem.itemName << " " << borrowedItem.itemQuan << " "
-                             << borrowedItem.borrowerId << " " << borrowedItem.borrowerName << " "
-                             << borrowedItem.borrowDate << endl;
+                           << borrowedItem.itemName << " " << borrowedItem.itemQuan << " "
+                           << borrowedItem.borrowerId << " " << borrowedItem.borrowerName << " "
+                           << borrowedItem.borrowDate << endl;
         }
     }
+
     borrowedFile.close();
     itemFile.close();
     tempItemFile.close();
@@ -417,11 +417,15 @@ void returnItem(int idToReturn) {
         rename("tempItem.txt", "item.txt");
         rename("tempBorrowedItem.txt", "borrowedItem.txt");
 
-        cout << "Item with ID " << idToReturn << " has been returned and stock updated.\n";
+        set_cursor(0, 17);
+        print("      Item #" + to_string(idToReturn) + " Successfully Returned      ", 0, {Color::bg_light_green, Color::black});
+        Sleep(2000);
     } else {
         remove("tempItem.txt");
         remove("tempBorrowedItem.txt");
-        cout << "Item with ID " << idToReturn << " not found in borrowed list.\n";
+        set_cursor(0, 17);
+        print("      Item #" + to_string(idToReturn) + " Not Found in Borrowed List      ", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
     }
 }
 
@@ -983,18 +987,139 @@ void readAllUserRequest() {
 }
 
 void readAllBorrowedItem(){
-	clearScreen();
-	cout << "All Borrowed Item"<< endl;
-	ifstream file("borrowedItem.txt");
-	int num = 0;
-	RequestItem req;
-    if (file.is_open()) {
-        while (file >>req.reqId>> req.itemId >> req.itemName>> req.itemQuan>> req.borrowerId >>req.borrowerName>> req.date) {
-        	num++;
-            cout <<  "Req. ID# "<<req.reqId<<", Item ID: " << req.itemId << ", Item Name: " << req.itemName << ", Quantity: " 
-			<< req.itemQuan << ", Borrower's Name: "<<req.borrowerName<< ", Borrower's ID: "<< req.borrowerId<< ", Date: "<< req.date << endl;
-		}
-	}cout <<"--------------------------------"<< endl;
+    clearScreen();
+    vector<BorrowedItem> borrows;
+    ifstream file("borrowedItem.txt");
+    BorrowedItem borrow;
+
+    // Read all borrowed items into vector 
+    while (file >> borrow.reqId >> borrow.itemId >> borrow.itemName 
+           >> borrow.itemQuan >> borrow.borrowerId >> borrow.borrowerName >> borrow.borrowDate) {
+        borrows.push_back(borrow);
+    }
+    file.close();
+
+    const int BORROWS_PER_PAGE = 3;
+    int currentPage = 0;
+    int totalPages = (borrows.size() + BORROWS_PER_PAGE - 1) / BORROWS_PER_PAGE;
+    string command;
+    bool refetch = false;
+
+    do {
+        if(refetch) {
+            borrows.clear();
+            ifstream file("borrowedItem.txt");
+            
+            while (file >> borrow.reqId >> borrow.itemId >> borrow.itemName 
+                   >> borrow.itemQuan >> borrow.borrowerId >> borrow.borrowerName >> borrow.borrowDate) {
+                borrows.push_back(borrow);
+            }
+            file.close();
+
+            currentPage = 0;
+            totalPages = (borrows.size() + BORROWS_PER_PAGE - 1) / BORROWS_PER_PAGE;
+            refetch = false;
+        }
+
+        clearScreen();
+        // Display borrowed items for current page
+        int start = currentPage * BORROWS_PER_PAGE;
+        int end = min(start + BORROWS_PER_PAGE, (int)borrows.size());
+
+        for (int i = start; i < end; i++) {
+            line_title("Request ID: #" + to_string(borrows[i].reqId), ' ', Color::bg_light_cyan, Color::black);
+
+            space();
+            cout << "\t";
+            cout << Color::cyan;
+            cout << left << setw(20) << ("Item ID: " + to_string(borrows[i].itemId));
+            
+            cout << Color::yellow;
+            cout << setw(25) << ("Item: " + borrows[i].itemName);
+            
+            cout << Color::light_magenta;
+            cout << setw(15) << ("Qty: " + to_string(borrows[i].itemQuan));
+            
+            space();
+            cout << "\t";
+            
+            cout << Color::light_green;
+            cout << left << setw(20) << ("Account ID: " + to_string(borrows[i].borrowerId));
+            
+            cout << Color::white;
+            cout << setw(25) << ("Borrower: " + borrows[i].borrowerName);
+            
+            cout << Color::light_red;
+            cout << setw(15) << ("Date: " + borrows[i].borrowDate);
+
+            cout << Color::reset;
+            space(2);
+            print_line('_', Color::bg_light_cyan + Color::black);
+            Sleep(30);
+        }
+
+        space(2);
+        print("Command: ", -28);
+        print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
+        cout << "\033[54D";
+        cin >> command;
+
+        if(isdigit(command[0])) {
+            int reqId = stoi(command);
+            ifstream checkFile("borrowedItem.txt");
+            BorrowedItem borrow;
+            bool found = false;
+
+            while (checkFile >> borrow.reqId >> borrow.itemId >> borrow.itemName 
+                   >> borrow.itemQuan >> borrow.borrowerId >> borrow.borrowerName >> borrow.borrowDate) {
+                if (borrow.reqId == reqId) {
+                    found = true;
+                    break;
+                }
+            }
+            checkFile.close();
+
+            if(found) {
+                returnItem(reqId);
+                refetch = true;
+                continue;
+            } else {
+                set_cursor(0, 17);
+                print("      Invalid Request ID      ", 0, {Color::bg_red, Color::white});
+                Sleep(2000);
+                continue;
+            }
+        }
+
+        // Handle navigation
+        if (right_key(command)) {
+            if (currentPage < totalPages - 1) currentPage++;
+        }
+        else if (db_right_key(command)) {
+            currentPage = min(currentPage + 2, totalPages - 1);
+        }
+        else if (tri_right_key(command)) {
+            currentPage = totalPages - 1;
+        }
+        else if (left_key(command)) {
+            if (currentPage > 0) currentPage--;
+        }
+        else if (db_left_key(command)) {
+            currentPage = max(currentPage - 2, 0);
+        }
+        else if (tri_left_key(command)) {
+            currentPage = 0;  
+        }
+        else if (!exit_key(command) && !back_key(command)) {
+            set_cursor(0, 17);
+            print("      Invalid Command      ", 0, {Color::bg_red, Color::white});
+            Sleep(2000);
+        }
+    }
+    while (!exit_key(command) && !back_key(command));
+    clearScreen();
+    cin.ignore();
+    return;
 }
 //user's all cancelled items only
 void readMyCancelled(int id) {
@@ -1361,10 +1486,8 @@ void registerUser() {
 void adminDashboard(int id,string name ,string username, string department, string userAccess,string password) {
 	clearScreen();
     int action;
-    int action2;
     string choice;  // Initializings
     int deleteId;
-    int returnId;
     Item item;
 
     do{
@@ -1548,7 +1671,6 @@ void adminDashboard(int id,string name ,string username, string department, stri
             continue;
         }
 
-
         else if(borrow_request_key(choice)) {
 
             readAllUserRequest();
@@ -1558,21 +1680,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
         else if(borrowed_items_key(choice)) {
 
             readAllBorrowedItem();
-            cout << "Enter Operation\n1- Return Item  0-DashBoard\nAction: ";
-            cin >> action2;
-
-            if(action2 == 1){
-                cout << "Enter Req. ID to Return: ";
-                cin >> returnId;
-                returnItem(returnId);
-            }
-
-            else if(action2 == 0){
-                clearScreen();
-            }
-
             continue;
-
         }
 
         else if(returned_items_key(choice)) {
@@ -1796,7 +1904,6 @@ int main() {
         print("REGISTER", -27);
         print("SETTINGS", -27);
         print("EXIT", -27);
-        
         space(4);
 
         print_gradient(line_str(' '), 228, 231, true);
