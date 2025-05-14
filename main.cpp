@@ -1954,9 +1954,54 @@ void adminDashboard(int id,string name ,string username, string department, stri
                 }
                 else if(logout_key(settingsChoice)) {
 
-                    set_cursor(0, 13);
-                    print("      Logging out of admin dashboard      ", 0, {Color::bg_green, Color::black});
+                    // LOGOUT Animation
+                    clearScreen();
+
+                    set_cursor(0, 8);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(2);
+                    print("         Logging out           ", 0, {Color::bg_light_cyan, Color::black});
+                    space(2);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(7);
+                    Sleep(800);
+                    
+                    set_cursor(0, 8);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(2);
+                    print("         Logging out .         ", 0, {Color::bg_light_cyan, Color::black}); 
+                    space(2);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(7);
+                    Sleep(800);
+                    
+                    set_cursor(0, 8);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(2);
+                    print("         Logging out . .       ", 0, {Color::bg_light_cyan, Color::black});
+                    space(2);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(7);
+                    Sleep(800);
+                    
+                    set_cursor(0, 8); 
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(2);
+                    print("         Logging out . . .     ", 0, {Color::bg_light_cyan, Color::black});
+                    space(2);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(7);
+                    Sleep(800);
+                    
+                    set_cursor(0, 8);
+                    print_gradient(line_str(' '), 84, 87, true);
+                    space(2);
+                    print("      Successfully logged out!      ", 0, {Color::bg_bright_green, Color::black});
+                    space(2);
+                    print_gradient(line_str(' '), 84, 87, true);
+                    space(7);
                     Sleep(3000);
+
                     clearScreen();
 
                     return;
@@ -1972,10 +2017,53 @@ void adminDashboard(int id,string name ,string username, string department, stri
         }
 
         else if(exit_key(choice) || back_key(choice)) {
-
             clearScreen();
-            cout << "Logging out of admin dashboard...\n";
+
+            set_cursor(0, 8);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(2);
+            print("         Logging out           ", 0, {Color::bg_light_cyan, Color::black});
+            space(2);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(7);
+            Sleep(800);
+            
+            set_cursor(0, 8);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(2);
+            print("         Logging out .         ", 0, {Color::bg_light_cyan, Color::black}); 
+            space(2);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(7);
+            Sleep(800);
+            
+            set_cursor(0, 8);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(2);
+            print("         Logging out . .       ", 0, {Color::bg_light_cyan, Color::black});
+            space(2);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(7);
+            Sleep(800);
+            
+            set_cursor(0, 8); 
+            print_gradient(line_str(' '), 244, 255, true);
+            space(2);
+            print("         Logging out . . .     ", 0, {Color::bg_light_cyan, Color::black});
+            space(2);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(7);
+            Sleep(800);
+            
+            set_cursor(0, 8);
+            print_gradient(line_str(' '), 84, 87, true);
+            space(2);
+            print("      Successfully logged out!      ", 0, {Color::bg_bright_green, Color::black});
+            space(2);
+            print_gradient(line_str(' '), 84, 87, true);
+            space(7);
             Sleep(3000);
+
             clearScreen();
             return;
         }
