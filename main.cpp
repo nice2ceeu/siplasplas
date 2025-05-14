@@ -320,7 +320,7 @@ void requestItems(int idToBorrow,int quantity,string name, int id , string date)
     ifstream inFile("item.txt");
     if (!inFile) {
         set_cursor(0, 17);
-        print("      Unable to open item.txt for reading      ", 0, {Color::bg_light_red, Color::black});
+        print("            Unable to open item.txt for reading            ", 0, {Color::bg_light_red, Color::black});
         Sleep(2000);
         return;
     }
@@ -328,7 +328,7 @@ void requestItems(int idToBorrow,int quantity,string name, int id , string date)
     ofstream outFile("requestItem.txt", ios::app);
     if (!outFile) {
         set_cursor(0, 17);
-        print("      Unable to open requestItem.txt for writing      ", 0, {Color::bg_light_red, Color::black});
+        print("            Unable to open requestItem.txt for writing            ", 0, {Color::bg_light_red, Color::black});
         Sleep(2000);
         inFile.close();
         return;
@@ -344,7 +344,8 @@ void requestItems(int idToBorrow,int quantity,string name, int id , string date)
                     name <<" "<< date << endl;
                 found = true;    
                 set_cursor(0, 17);
-                print("      Request for " + to_string(quantity) + " units of " + req.itemName + " has been added      ", 0, {Color::bg_light_green, Color::black});
+                print("            Request for " + to_string(quantity) + " units of " + req.itemName + " has been added            ", 0, {Color::bg_light_green, Color::black});
+                Sleep(2000);
             }else{
                 set_cursor(0, 17);
                 print("      Insufficient stock for " + req.itemName + ". Only " + to_string(req.itemQuan) + " units available      ", 0, {Color::bg_light_red, Color::black});
@@ -356,7 +357,7 @@ void requestItems(int idToBorrow,int quantity,string name, int id , string date)
 
     if (!found) {
         set_cursor(0, 17);
-        print("      Item #" + to_string(idToBorrow) + " not found      ", 0, {Color::bg_light_red, Color::black});
+        print("                  Item #" + to_string(idToBorrow) + " not found                  ", 0, {Color::bg_light_red, Color::black});
         Sleep(2000);
     }
 
@@ -968,27 +969,141 @@ void readMyRequest(int id) {
 }
 void readMyBorrow(int id) {
     clearScreen();
-    cout << "All Borrowed Item" << endl;
-    
+    vector<BorrowedItem> borrows;
     ifstream file("borrowedItem.txt");
-    RequestItem req;
-    
-    if (file.is_open()) {
-        while (file >> req.reqId>>req.itemId >> req.itemName >> req.itemQuan 
-                     >> req.borrowerId >> req.borrowerName>> req.date) {
-            if (id == req.borrowerId) {
-                cout << "Item ID: " << req.itemId 
-                     << ", Item Name: " << req.itemName 
-                     << ", Quantity: " << req.itemQuan 
-                     << ", Date: " << req.date << endl;
+    BorrowedItem borrow;
+    bool refetch = false;
+
+    // Read all borrows into vector
+    while (file >> borrow.reqId >> borrow.itemId >> borrow.itemName 
+        >> borrow.itemQuan >> borrow.borrowerId >> borrow.borrowerName >> borrow.borrowDate) {
+        if(borrow.borrowerId == id) {
+         borrows.push_back(borrow);
+        }
+    }
+    file.close();
+
+    const int BORROWS_PER_PAGE = 5;
+    int currentPage = 0;
+    int totalPages = (borrows.size() + BORROWS_PER_PAGE - 1) / BORROWS_PER_PAGE;
+    string command;
+
+    do {
+        if(refetch) {
+            borrows.clear();
+            ifstream file("borrowedItem.txt");
+            
+            while (file >> borrow.reqId >> borrow.itemId >> borrow.itemName 
+                >> borrow.itemQuan >> borrow.borrowerId >> borrow.borrowerName >> borrow.borrowDate) {
+                if(borrow.borrowerId == id) {
+                    borrows.push_back(borrow);
+                }
+            }
+            file.close();
+
+            totalPages = (borrows.size() + BORROWS_PER_PAGE - 1) / BORROWS_PER_PAGE;
+            if(currentPage >= totalPages) {
+                currentPage = max(0, totalPages - 1);
+            }
+            refetch = false;
+        }
+
+        clearScreen();
+        cout << " <<" << string(term_width * 0.39, ' ') << " My Borrows " << string(term_width * 0.37, ' ') << " >>\n";
+        print_gradient(line_str('_'), 35, 40);
+
+        // Display borrows for current page
+        int start = currentPage * BORROWS_PER_PAGE;
+        int end = min(start + BORROWS_PER_PAGE, (int)borrows.size());
+
+        for (int i = start; i < end; i++) {
+         cout << "\t\t";
+         
+         cout << Color::cyan;
+         cout << left << setw(20) << ("Borrow ID: " + to_string(borrows[i].reqId));
+         
+         cout << Color::yellow;
+         cout << setw(25) << ("Item: " + borrows[i].itemName);
+         
+         cout << Color::light_magenta;
+         cout << setw(15) << ("Qty: " + to_string(borrows[i].itemQuan));
+         
+         space();
+         cout << "\t";
+         
+         cout << Color::green;
+         cout << setw(20) << ("Item ID: " + to_string(borrows[i].itemId));
+         
+         cout << Color::light_red;
+         cout << setw(25) << ("Date: " + borrows[i].borrowDate);
+
+         cout << Color::reset;
+         space();
+         print_gradient(line_str('_'), 35, 40);
+         Sleep(30);
+        }
+
+        space(2);
+        print("Command: ", -28);
+        print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
+        cout << "\033[54D";
+        getline(cin, command);
+
+        if(exit_key(command) || back_key(command)) break;
+
+        // Handle return command
+        if(convert_case(command, "lower").substr(0,6) == "return") {
+            string idStr = command.substr(7);
+            if(isdigit(idStr[0])) {
+                int returnId = stoi(idStr);
+                bool validId = false;
+                
+                // Verify the return ID belongs to this user
+                for(const auto& b : borrows) {
+                    if(b.reqId == returnId) {
+                        validId = true;
+                        break;
+                    }
+                }
+
+                if(validId) {
+                    returnItem(returnId);
+                    refetch = true;
+                    continue;
+                } else {
+                    set_cursor(0, 17);
+                    print("      Invalid Borrow ID      ", 0, {Color::bg_light_red, Color::black});
+                    Sleep(2000);
+                    continue;
+                }
             }
         }
-        file.close(); 
-    } else {
-        cout << "Failed to open requestItem.txt" << endl;
-    }
-    
-    cout << "--------------------------------" << endl;
+
+        // Handle navigation
+        if (right_key(command)) {
+         if (currentPage < totalPages - 1) currentPage++;
+        }
+        else if (db_right_key(command)) {
+         currentPage = min(currentPage + 2, totalPages - 1);
+        }
+        else if (tri_right_key(command)) {
+         currentPage = totalPages - 1;
+        }
+        else if (left_key(command)) {
+         if (currentPage > 0) currentPage--;
+        }
+        else if (db_left_key(command)) {
+         currentPage = max(currentPage - 2, 0);
+        }
+        else if (tri_left_key(command)) {
+         currentPage = 0;
+        }
+        else {
+         set_cursor(0, 17);
+         print("      Invalid Command      ", 0, {Color::bg_red, Color::white});
+         Sleep(2000);
+        }
+    } while(true);
 }
 //admin side
 void readAllUserRequest() {
@@ -2086,7 +2201,6 @@ void adminDashboard(int id,string name ,string username, string department, stri
 void userDashboard(int id, string name, string username, string department, string userAccess, string password) {
     clearScreen();
     string choice;
-    int idToCancel;
     string date = getCurrentDate();
 
     do {
@@ -2146,6 +2260,11 @@ void userDashboard(int id, string name, string username, string department, stri
                     }
                     file.close();
 
+                    totalPages = (items.size() + ITEMS_PER_PAGE - 1) / ITEMS_PER_PAGE;
+                    if(currentPage > totalPages){
+                        currentPage = currentPage - 1;
+                    }
+
                     refetch = false;
                 }
 
@@ -2177,6 +2296,7 @@ void userDashboard(int id, string name, string username, string department, stri
                 }
 
                 space(2);
+                set_cursor(0, 17);
                 print("Command: ", -28);
                 
                 print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
@@ -2222,7 +2342,6 @@ void userDashboard(int id, string name, string username, string department, stri
                         cin >> quantity;
 
                         requestItems(stoi(idStr), quantity, name, id, date);
-                        Sleep(3000);
                         cin.ignore();
                         continue;
                     }
@@ -2233,36 +2352,138 @@ void userDashboard(int id, string name, string username, string department, stri
                 Sleep(2000);
                 continue;
             }
-            while (!exit_key(command) && !back_key(command));
+            while(true);
             continue;
         }
 
         else if(my_requests_key(choice)) {
-            readMyRequest(id);
-            
-            space(2);
-            print("Cancel Request (1) or Return (0)?", 0);
-            space();
-            print_input_box(20, 0, Config::color_theme, "action", false);
-            
-            int cancelChoice;
-            set_cursor(31, 16);
-            cin >> cancelChoice;
+            clearScreen();
+            vector<RequestItem> requests;
+            ifstream file("requestItem.txt");
+            RequestItem req;
+            bool refetch = false;
 
-            if(cancelChoice == 1) {
-                clearScreen();
-                print_input_box(20, 0, Config::color_theme, "request id", false);
-                set_cursor(31, 8);
-                cin >> idToCancel;
-                cancelItems(idToCancel);
+            // Read all requests into vector
+            while (file >> req.reqId >> req.itemId >> req.itemName 
+                   >> req.itemQuan >> req.borrowerId >> req.borrowerName >> req.date) {
+                if(req.borrowerId == id) {
+                    requests.push_back(req);
+                }
             }
-            cin.ignore();
+            file.close();
+
+            const int REQUESTS_PER_PAGE = 5;
+            int currentPage = 0;
+            int totalPages = (requests.size() + REQUESTS_PER_PAGE - 1) / REQUESTS_PER_PAGE;
+            string command;
+
+            do {
+                if(refetch){
+                    requests.clear();
+                    ifstream file("requestItem.txt");
+
+                    while (file >> req.reqId >> req.itemId >> req.itemName 
+                           >> req.itemQuan >> req.borrowerId >> req.borrowerName >> req.date) {
+                        if(req.borrowerId == id) {
+                            requests.push_back(req);
+                        }
+                    }
+                    file.close();
+
+                    totalPages = (requests.size() + REQUESTS_PER_PAGE - 1) / REQUESTS_PER_PAGE;
+                    if(currentPage > totalPages){
+                        currentPage = 0;
+                    }
+                    refetch = false;
+                }
+
+                clearScreen();
+                cout << " <<" << string(term_width * 0.39, ' ') << " My Requests " << string(term_width * 0.37, ' ') << " >>\n";
+                print_gradient(line_str('_'), 35, 40);
+
+                // Display requests for current page
+                int start = currentPage * REQUESTS_PER_PAGE;
+                int end = min(start + REQUESTS_PER_PAGE, (int)requests.size());
+
+                for (int i = start; i < end; i++) {
+                    cout << "\t\t";
+                    
+                    cout << Color::cyan;
+                    cout << left << setw(20) << ("Request ID: " + to_string(requests[i].reqId));
+                    
+                    cout << Color::yellow;
+                    cout << setw(25) << ("Item: " + requests[i].itemName);
+                    
+                    cout << Color::light_magenta;
+                    cout << setw(15) << ("Qty: " + to_string(requests[i].itemQuan));
+                    
+                    space();
+                    cout << "\t";
+                    
+                    cout << Color::green;
+                    cout << setw(20) << ("Item ID: " + to_string(requests[i].itemId));
+                    
+                    cout << Color::light_red;
+                    cout << setw(25) << ("Date: " + requests[i].date);
+
+                    cout << Color::reset;
+                    space();
+                    print_gradient(line_str('_'), 35, 40);
+                    Sleep(30);
+                }
+
+                space(2);
+                print("Command: ", -28);
+                print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
+                cout << "\033[54D";
+                getline(cin, command);
+
+                if(exit_key(command) || back_key(command)) break;
+
+                // Handle navigation
+                if (right_key(command)) {
+                    if (currentPage < totalPages - 1) currentPage++;
+                    continue;
+                }
+                else if (db_right_key(command)) {
+                    currentPage = min(currentPage + 2, totalPages - 1);
+                    continue;
+                }
+                else if (tri_right_key(command)) {
+                    currentPage = totalPages - 1;
+                    continue;
+                }
+                else if (left_key(command)) {
+                    if (currentPage > 0) currentPage--;
+                    continue;
+                }
+                else if (db_left_key(command)) {
+                    currentPage = max(currentPage - 2, 0);
+                    continue;
+                }
+                else if (tri_left_key(command)) {
+                    currentPage = 0;
+                    continue;
+                }
+
+                if(convert_case(command, "lower").substr(0,6) == "cancel") {
+                    string idStr = command.substr(7);
+                    if(isdigit(idStr[0])) {
+                        cancelItems(stoi(idStr));
+                        refetch = true;
+                        continue;
+                    }
+                }
+
+                set_cursor(0, 17);
+                print("      Invalid Command      ", 0, {Color::bg_light_red, Color::black});
+                Sleep(2000);
+            } while(true);
             continue;
         }
 
-        else if(my_borrows_key(choice)) {
+        else if(my_borrows_key(choice)){
             readMyBorrow(id);
-            cin.ignore();
             continue;
         }
 
@@ -2396,8 +2617,12 @@ void userDashboard(int id, string name, string username, string department, stri
                     clearScreen();
                     return;
                 }
-            
-            } while(true);
+                else {
+                    set_cursor(0, 17);
+                    print("      Invalid Command      ", 0, {Color::bg_light_red, Color::black});
+                    Sleep(2000);
+                }
+            } while(!exit_key(choice) && !back_key(choice));
 
             continue;
         }

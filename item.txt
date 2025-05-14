@@ -2,9 +2,9 @@
 3 monitor 8
 4 eraser 17
 5 a4-bondpaper 420
-6 mangga 39
+6 mangga 37
 7 laptop 10
-8 Desktop 308
+8 Desktop 306
 9 Napsack 20
 10 Selfie-Stick 15
 11 Watch 2
@@ -15,4 +15,4 @@
 17 Eye-Glass 0
 18 Perfume 6
 19 Sunscreen 15
-20 Bag 4
+20 Bag 2

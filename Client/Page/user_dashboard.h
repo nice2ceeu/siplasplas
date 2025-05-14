@@ -51,7 +51,7 @@ inline void my_borrows_remove(const std::string& key) {
 //? ------ MY CANCELATION KEYBINDS ------
 
 inline std::vector<std::string>& my_cancellations_keybinds() {
-    static std::vector<std::string> keybinds = {"my cancelation", "my cancel"};
+    static std::vector<std::string> keybinds = {"my cancellation", "my cancel"};
     return keybinds;
 }
 
@@ -104,4 +104,32 @@ inline void my_requests_remove(const std::string& key) {
     keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_userdashboard(key)), keybinds.end());
 }
 
+
+//? ------ CANCEL REQUEST KEYBINDS ------
+
+inline std::vector<std::string>& cancel_request_keybinds() {
+    static std::vector<std::string> keybinds = {"cancel request", "cancel requests"};
+    return keybinds;
+}
+
+inline bool cancel_request_key(std::string input) {
+    input = to_lower_userdashboard(input);
+    const auto keybinds = cancel_request_keybinds();
+    for(const auto& key : keybinds) {
+        if(input == key) return true;
+    }
+    return false;
+}
+
+inline void cancel_request_add(const std::string& key) {
+    auto& keybinds = cancel_request_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_userdashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_userdashboard(key));
+    }
+}
+
+inline void cancel_request_remove(const std::string& key) {
+    auto& keybinds = cancel_request_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_userdashboard(key)), keybinds.end());
+}
 #endif

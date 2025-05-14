@@ -3,7 +3,3 @@
 3 9 Napsack 2 8 Israel 2025-05-03
 4 4 eraser 4 7 Kc-Sean 2025-05-10
 5 18 Perfume 1 4 rhenzy 2025-05-13
-6 8 Desktop 2 10 devacc 2025-05-15
-7 6 mangga 2 10 devacc 2025-05-15
-8 5 a4-bondpaper 3 10 devacc 2025-05-15
-9 2 pencil 3 10 devacc 2025-05-15

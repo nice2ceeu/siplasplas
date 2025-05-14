@@ -16,3 +16,6 @@
 16 1 paper 1 10 kristoffer 2025-04-28
 4 1 paper 2 10 kristoffer 2025-04-28
 7 2 pencil 21 10 kristoffer 2025-04-28
+9 2 pencil 3 10 devacc 2025-05-15
+11 5 a4-bondpaper 4 10 devacc 2025-05-15
+11 19 Sunscreen 3 10 devacc 2025-05-15
