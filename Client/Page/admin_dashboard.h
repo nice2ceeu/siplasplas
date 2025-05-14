@@ -282,4 +282,62 @@ inline void account_settings_remove(const std::string& key) {
 }
 
 
+//? ------ LOGOUT KEYBINDS ------
+
+inline std::vector<std::string>& logout_keybinds() {
+    static std::vector<std::string> keybinds = {"logout", "sign out"};
+    return keybinds;
+}
+
+inline bool logout_key(std::string input) {
+    input = to_lower_dashboard(input);
+    const auto keybinds = logout_keybinds();
+    for(const auto& key : keybinds) {
+        if(input == key) return true;
+    }
+    return false;
+}
+
+inline void logout_add(const std::string& key) {
+    auto& keybinds = logout_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_dashboard(key));
+    }
+}
+
+inline void logout_remove(const std::string& key) {
+    auto& keybinds = logout_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)), keybinds.end());
+}
+
+
+//? ------ CHANGE PASSWORD KEYBINDS ------
+
+inline std::vector<std::string>& change_password_keybinds() {
+    static std::vector<std::string> keybinds = {"change password", "update password"};
+    return keybinds;
+}
+
+inline bool change_password_key(std::string input) {
+    input = to_lower_dashboard(input);
+    const auto keybinds = change_password_keybinds();
+    for(const auto& key : keybinds) {
+        if(input == key) return true;
+    }
+    return false;
+}
+
+inline void change_password_add(const std::string& key) {
+    auto& keybinds = change_password_keybinds();
+    if(std::find(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)) == keybinds.end()) {
+        keybinds.push_back(to_lower_dashboard(key));
+    }
+}
+
+inline void change_password_remove(const std::string& key) {
+    auto& keybinds = change_password_keybinds();
+    keybinds.erase(std::remove(keybinds.begin(), keybinds.end(), to_lower_dashboard(key)), keybinds.end());
+}
+
+
 #endif

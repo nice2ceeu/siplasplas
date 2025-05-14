@@ -819,26 +819,24 @@ void readItems(const bool isDelete) {
 
 //changing password
 void changePass(int id, string confirmedPass){
-	clearScreen();
-        ifstream file("data.txt"); 
-        ofstream temp("tempData.txt",ios::app );
-        User user;
-        if (file.is_open()) {
-            while (file >> user.id >> user.name >> user.username >> user.password >> user.dept>> user.userAccess) {
-            	if(id == user.id){
-            		temp <<user.id<<" "<< user.name<<" "<< user.username<<" "<< confirmedPass<<" "<< user.dept<<" "<<user.userAccess<<endl;
-				}else{
-					temp <<user.id<<" "<< user.name<<" "<< user.username<<" "<< user.password<<" "<< user.dept<<" "<<user.userAccess<<endl;
-				}
+    ifstream file("data.txt"); 
+    ofstream temp("tempData.txt",ios::app );
+    User user;
+    if (file.is_open()) {
+        while (file >> user.id >> user.name >> user.username >> user.password >> user.dept>> user.userAccess) {
+            if(id == user.id){
+                temp <<user.id<<" "<< user.name<<" "<< user.username<<" "<< confirmedPass<<" "<< user.dept<<" "<<user.userAccess<<endl;
+            }else{
+                temp <<user.id<<" "<< user.name<<" "<< user.username<<" "<< user.password<<" "<< user.dept<<" "<<user.userAccess<<endl;
             }
-            
-           file.close();
-           temp.close();
         }
         
-        remove("data.txt");
-        rename("tempData.txt","data.txt");
-        cout << "Password Successfully Changed\n";
+        file.close();
+        temp.close();
+    }
+    
+    remove("data.txt");
+    rename("tempData.txt","data.txt");
 }
         
 // show returned Itemsss
@@ -1666,7 +1664,6 @@ void registerUser() {
 //Admin dashboard nakalagay naman HAHAHAH
 void adminDashboard(int id,string name ,string username, string department, string userAccess,string password) {
 	clearScreen();
-    int action;
     string choice;  // Initializings
     Item item;
 
@@ -1884,47 +1881,94 @@ void adminDashboard(int id,string name ,string username, string department, stri
 
         else if(account_settings_key(choice)) {
 
-            clearScreen();
-            cout << "1. Change password\n0. back\nAction: ";
-            cin >>action;
-
-            if(action == 1){
-
+            do {
                 clearScreen();
-                cin.ignore();
-                string currentPass, newPass, confirmPass;
-                cout << "Enter current Password: ";
-                getline(cin, currentPass);
-                cout << "Enter new Password: ";
-                getline(cin,newPass);
-                cout << "Confirm Password: ";
-                getline(cin,confirmPass);
                 
-                if(currentPass == password){
+                space(4);
+                line_title("Account Settings", '=', Color::light_cyan, Color::yellow);
+                space(2);
 
-                    if(newPass == confirmPass){
-                        changePass(id,confirmPass);
-                        continue;
+                print_triple_input_box("Change Password", "Logout", "Back", 20, 3, 1, Color::light_yellow);
+                space(2);
+                print_line('=', Color::light_cyan);
+                space(4);
+                
+                print_input_box(20, 0, Config::color_theme, "command", false);
+                set_cursor(31, 16);
+                
+                string settingsChoice;
+                getline(cin, settingsChoice);
+
+                if(exit_key(settingsChoice) || back_key(settingsChoice)) break;
+
+                if(change_password_key(settingsChoice)) {
+                    clearScreen();
+                    
+                    space(2);
+                    line_title("Change Password", '=', Color::light_cyan, Color::yellow);
+                    space();
+                    
+                    print_input_box(20, 0, Color::white, "current password", false);
+                    space(2);
+                    print_input_box(20, 0, Color::white, "new password", false); 
+                    space(2);
+                    print_input_box(20, 0, Color::white, "confirm password", false);
+
+                    space(2);
+                    print_line('=', Color::light_cyan);
+                    space();
+
+                    set_cursor(31, 5);
+                    string currentPass;
+                    getline(cin, currentPass);
+                    if(exit_key(currentPass) || back_key(currentPass)) continue;
+
+                    set_cursor(31, 9);  
+                    string newPass;
+                    getline(cin, newPass);
+                    if(exit_key(newPass) || back_key(newPass)) continue;
+
+                    set_cursor(31, 13);
+                    string confirmPass;
+                    getline(cin, confirmPass);
+                    if(exit_key(confirmPass) || back_key(confirmPass)) continue;
+
+                    if(currentPass == password){
+                        if(newPass == confirmPass){
+                            changePass(id, confirmPass);
+                            set_cursor(0, 18);
+                            print("      Password Changed Successfully      ", 0, {Color::bg_light_green, Color::black});
+                            Sleep(2000);
+                        }
+                        else{
+                            set_cursor(0, 18);
+                            print("      Passwords Do Not Match      ", 0, {Color::bg_light_red, Color::black});
+                            Sleep(2000);
+                        }
                     }
-
                     else{
-                        cout << "Passwords not Match\n";
-                        continue;
+                        set_cursor(0, 18);
+                        print("      Current Password Is Incorrect      ", 0, {Color::bg_light_red, Color::black});
+                        Sleep(2000);
                     }
-
                 }
+                else if(logout_key(settingsChoice)) {
 
-                else{
-                    cout<< "Password do not match in our Database\n";
+                    set_cursor(0, 13);
+                    print("      Logging out of admin dashboard      ", 0, {Color::bg_green, Color::black});
+                    Sleep(3000);
+                    clearScreen();
+
+                    return;
                 }
-
-            }
-
-            else if(action == 0){
-                continue;
-            }
-
-            cout << "Invalid";
+                else {
+                    set_cursor(0, 13);
+                    print("      Invalid Command      ", 0, {Color::bg_light_red, Color::black});
+                    Sleep(2000);
+                }
+            } 
+            while(true);
+            continue;
         }
 
         else if(exit_key(choice) || back_key(choice)) {
