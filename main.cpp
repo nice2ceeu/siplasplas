@@ -1387,25 +1387,95 @@ void readAllBorrowedItem(){
 //user's all cancelled items only
 void readMyCancelled(int id) {
     clearScreen();
-    cout << "Cancel Request" << endl;
-    
+    vector<RequestItem> cancelled_items;
     ifstream file("cancelItem.txt");
     RequestItem cancelled;
 
-    if (file.is_open()) {
-        while (file >> cancelled.reqId >> cancelled.itemId >> cancelled.itemName>> cancelled.itemQuan>> cancelled.borrowerId >>
-		cancelled.borrowerName>> cancelled.date) {
-            if (id == cancelled.borrowerId) {
-                cout <<  "Req. ID "<<cancelled.reqId<<", Item ID: " << cancelled.itemId << ", Item Name: " << cancelled.itemName << ", Quantity: " 
-			<< cancelled.itemQuan << ", Borrower's Name: "<<cancelled.borrowerName<< ", Borrower's ID: "<< cancelled.borrowerId<< ", Date: "<< cancelled.date << endl;
-            }
+    // Read all cancelled items into vector
+    while (file >> cancelled.reqId >> cancelled.itemId >> cancelled.itemName 
+           >> cancelled.itemQuan >> cancelled.borrowerId >> cancelled.borrowerName >> cancelled.date) {
+        if(cancelled.borrowerId == id) {
+            cancelled_items.push_back(cancelled);
         }
-        file.close();
-    } else {
-        cout << "Failed to open cancelItem.txt" << endl;
     }
-    
-    cout << "--------------------------------" << endl;
+    file.close();
+
+    const int ITEMS_PER_PAGE = 5;
+    int currentPage = 0;
+    int totalPages = (cancelled_items.size() + ITEMS_PER_PAGE - 1) / ITEMS_PER_PAGE;
+    string command;
+
+    do {
+        clearScreen();
+        cout << " <<" << string(term_width * 0.35, ' ') << " My Cancellation  " << string(term_width * 0.34, ' ') << " >>\n";
+        print_gradient(line_str('_'), 35, 40);
+
+        // Display cancelled items for current page
+        int start = currentPage * ITEMS_PER_PAGE;
+        int end = min(start + ITEMS_PER_PAGE, (int)cancelled_items.size());
+
+        for (int i = start; i < end; i++) {
+            cout << "\t\t";
+            
+            cout << Color::cyan;
+            cout << left << setw(20) << ("Request ID: " + to_string(cancelled_items[i].reqId));
+            
+            cout << Color::yellow;
+            cout << setw(25) << ("Item: " + cancelled_items[i].itemName);
+            
+            cout << Color::light_magenta;
+            cout << setw(15) << ("Qty: " + to_string(cancelled_items[i].itemQuan));
+            
+            space();
+            cout << "\t";
+            
+            cout << Color::green;
+            cout << setw(20) << ("Item ID: " + to_string(cancelled_items[i].itemId));
+            
+            cout << Color::light_red;
+            cout << setw(25) << ("Date: " + cancelled_items[i].date);
+
+            cout << Color::reset;
+            space();
+            print_gradient(line_str('_'), 35, 40);
+            Sleep(30);
+        }
+
+        space(2);
+        print("Command: ", -28);
+        print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
+        cout << "\033[54D";
+        getline(cin, command);
+
+        if(exit_key(command) || back_key(command)) break;
+
+        // Handle navigation
+        if (right_key(command)) {
+            if (currentPage < totalPages - 1) currentPage++;
+        }
+        else if (db_right_key(command)) {
+            currentPage = min(currentPage + 2, totalPages - 1);
+        }
+        else if (tri_right_key(command)) {
+            currentPage = totalPages - 1;
+        }
+        else if (left_key(command)) {
+            if (currentPage > 0) currentPage--;
+        }
+        else if (db_left_key(command)) {
+            currentPage = max(currentPage - 2, 0);
+        }
+        else if (tri_left_key(command)) {
+            currentPage = 0;
+        }
+        else {
+            set_cursor(0, 17);
+            print("      Invalid Command      ", 0, {Color::bg_red, Color::white});
+            Sleep(2000);
+        }
+    } while (!exit_key(command) && !back_key(command));
+    clearScreen();
+    return;
 }
 
 //deleting user(admin side)
@@ -2205,12 +2275,12 @@ void userDashboard(int id, string name, string username, string department, stri
 
     do {
         clearScreen();
-
-        print_gradient(line_str('='), 203, 207);
+        
+        print_gradient(line_str('='), 221, 225);
 
         print_triple_text("Name: " + name + "(" + username + ")", "Access: " + userAccess, "Department: " + department, 2);
  
-        print_gradient(line_str('='), 203, 207);
+        print_gradient(line_str('='), 221, 225);
         
         space(2);
         print_gradient("USER DASHBOARD", 221, 223);
@@ -2220,7 +2290,7 @@ void userDashboard(int id, string name, string username, string department, stri
         space();
         print_triple_input_box("My Cancellations", "Account Settings", "Back", 20, 3, 1, Color::light_yellow);
         space(2);
-        print_gradient(line_str('='), 203, 207);
+        print_gradient(line_str('='), 221, 225);
         space(2);
         
         print_input_box(20, 0, Config::color_theme, "command", false);
@@ -2489,7 +2559,6 @@ void userDashboard(int id, string name, string username, string department, stri
 
         else if(my_cancellations_key(choice)) {
             readMyCancelled(id);
-            cin.ignore(); 
             continue;
         }
 
@@ -2681,7 +2750,7 @@ void userDashboard(int id, string name, string username, string department, stri
         }
 
         else {
-            set_cursor(0, 17);
+            set_cursor(0, 18);
             print("      Invalid Command      ", 0, {Color::bg_light_red, Color::black});
             Sleep(2000);
             continue;

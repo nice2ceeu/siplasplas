@@ -51,7 +51,7 @@ inline void my_borrows_remove(const std::string& key) {
 //? ------ MY CANCELATION KEYBINDS ------
 
 inline std::vector<std::string>& my_cancellations_keybinds() {
-    static std::vector<std::string> keybinds = {"my cancellation", "my cancel"};
+    static std::vector<std::string> keybinds = {"my cancellation", "my cancel", "my cancellation", "my cancellations"};
     return keybinds;
 }
 
