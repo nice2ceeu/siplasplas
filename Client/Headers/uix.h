@@ -21,7 +21,7 @@ void print_triple_text(const string &left_text, const string &middle_text, const
     const string &right_color = Config::text_color
 );
 
-void print_line(const char symbol = '_', const string &color = "\e[1;30m", const string &text_color = Config::text_color);
+void print_line(const char symbol = '_', const string &color = "\e[1;30m");
 void print_gradient(const string &text, const int &color_start = 32, const int &color_end = 45, bool background = false, const int side = 0);
 void line_title(const string text, const char symbol, const string line_color, const string text_color);
 

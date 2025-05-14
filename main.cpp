@@ -442,7 +442,9 @@ void approveRequest(int idToBorrow) {
     ofstream borrowedFile("borrowedItem.txt", ios::app);
 
     if (!tempFile || !tempItemFile || !borrowedFile) {
-        cerr << "Error: Unable to open temp or borrowedItem.txt for writing.\n";
+        set_cursor(0, 17);
+        print("      Server Error: Unable to open temp or borrowedItem.txt for writing      ", 0, {Color::bg_light_green, Color::black});
+        Sleep(2000);
         return;
     }
 
@@ -907,7 +909,7 @@ void readAllUserRequest() {
 
             cout << Color::reset;
             space(2);
-            print_line('_', Color::bg_light_yellow, Color::black);
+            print_line('_', Color::bg_light_yellow + Color::black);
             Sleep(30);
         }
 
@@ -936,7 +938,6 @@ void readAllUserRequest() {
             checkFile.close();
 
             if(found) {
-                // TODO: Handle the response of this function, It gives three request depending on the status of approval
                 approveRequest(reqId);
                 refetch = true;
                 continue;
@@ -1428,7 +1429,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
                 print_input_box(20, 0, Color::white, "name", false);
                 space(2);
                 print_input_box(20, 0, Color::white, "quantity", false);
-    
+
                 space(2);
                 print_line('=', Color::light_cyan);
                 space();
