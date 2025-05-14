@@ -28,6 +28,7 @@
 #include "Config.h"
 #include "Keybinds.h"
 #include "admin_dashboard.h"
+#include "user_dashboard.h"
 
 using namespace Color;
 using namespace Config;
@@ -315,42 +316,48 @@ void addItem(const Item& item) {
 
 //user requesting an item to borrow
 void requestItems(int idToBorrow,int quantity,string name, int id , string date) {
-    clearScreen();
-	int lastId = getLastReqId() +1;
+    int lastId = getLastReqId() +1;
     ifstream inFile("item.txt");
     if (!inFile) {
-        cerr << "Error: Unable to open item.txt for reading.\n";
+        set_cursor(0, 17);
+        print("      Unable to open item.txt for reading      ", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         return;
     }
 
     ofstream outFile("requestItem.txt", ios::app);
     if (!outFile) {
-        cerr << "Error: Unable to open requestItem.txt for writing.\n";
+        set_cursor(0, 17);
+        print("      Unable to open requestItem.txt for writing      ", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         inFile.close();
         return;
     }
 
     RequestItem req;
     bool found = false;
-	
+    
     while (inFile >> req.itemId >> req.itemName >> req.itemQuan) {
         if (req.itemId == idToBorrow) {
-        	if(req.itemQuan >= quantity){
-        	outFile << lastId<< " "<<req.itemId << " " << req.itemName << " " << quantity <<" "<< id<< " "<<
-				name <<" "<< date << endl;
-            found = true;	
-            cout << "Request for " << quantity << " units of " << req.itemName << " has been added.\n";
-			}else{
-				cout << "Insufficient stock for " << req.itemName << ". Only " << req.itemQuan << " units are available.\n";
+            if(req.itemQuan >= quantity){
+                outFile << lastId<< " "<<req.itemId << " " << req.itemName << " " << quantity <<" "<< id<< " "<<
+                    name <<" "<< date << endl;
+                found = true;    
+                set_cursor(0, 17);
+                print("      Request for " + to_string(quantity) + " units of " + req.itemName + " has been added      ", 0, {Color::bg_light_green, Color::black});
+            }else{
+                set_cursor(0, 17);
+                print("      Insufficient stock for " + req.itemName + ". Only " + to_string(req.itemQuan) + " units available      ", 0, {Color::bg_light_red, Color::black});
+                Sleep(2000);
                 return;
-			}
-			
-            
+            }
         }
     }
 
     if (!found) {
-        cout << "Item with ID " << idToBorrow << " not found." << endl;
+        set_cursor(0, 17);
+        print("      Item #" + to_string(idToBorrow) + " not found      ", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
     }
 
     inFile.close();
@@ -805,11 +812,10 @@ void readItems(const bool isDelete) {
             refetch = true;
             continue;
         }
-        else {
-            set_cursor(0, 17);
-            print("      Invalid Command      ", 0, {Color::bg_light_red, Color::black});
-            Sleep(2000);
-        }
+
+        set_cursor(0, 17);
+        print("      Invalid Command      ", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
     }
     while (!exit_key(command) && !back_key(command));
     clearScreen();
@@ -1692,12 +1698,6 @@ void adminDashboard(int id,string name ,string username, string department, stri
         print_input_box(20, 0, Config::color_theme, "command", false);
         set_cursor(31, 18);
 
-        /* 
-
-            TODO: Logout function will be moved to the account settings as there is no more space here
-
-        */
-
         getline(cin, choice);
 
         if(show_items_key(choice)) {
@@ -1954,13 +1954,13 @@ void adminDashboard(int id,string name ,string username, string department, stri
                 }
                 else if(logout_key(settingsChoice)) {
 
-                    // LOGOUT Animation
+                    // Logout Animation
                     clearScreen();
 
                     set_cursor(0, 8);
                     print_gradient(line_str(' '), 244, 255, true);
                     space(2);
-                    print("         Logging out           ", 0, {Color::bg_light_cyan, Color::black});
+                    print("         Logging out           ", 0, {Color::bg_white, Color::black});
                     space(2);
                     print_gradient(line_str(' '), 244, 255, true);
                     space(7);
@@ -1969,7 +1969,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
                     set_cursor(0, 8);
                     print_gradient(line_str(' '), 244, 255, true);
                     space(2);
-                    print("         Logging out .         ", 0, {Color::bg_light_cyan, Color::black}); 
+                    print("         Logging out .         ", 0, {Color::bg_white, Color::black}); 
                     space(2);
                     print_gradient(line_str(' '), 244, 255, true);
                     space(7);
@@ -1978,7 +1978,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
                     set_cursor(0, 8);
                     print_gradient(line_str(' '), 244, 255, true);
                     space(2);
-                    print("         Logging out . .       ", 0, {Color::bg_light_cyan, Color::black});
+                    print("         Logging out . .       ", 0, {Color::bg_white, Color::black});
                     space(2);
                     print_gradient(line_str(' '), 244, 255, true);
                     space(7);
@@ -1987,7 +1987,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
                     set_cursor(0, 8); 
                     print_gradient(line_str(' '), 244, 255, true);
                     space(2);
-                    print("         Logging out . . .     ", 0, {Color::bg_light_cyan, Color::black});
+                    print("         Logging out . . .     ", 0, {Color::bg_white, Color::black});
                     space(2);
                     print_gradient(line_str(' '), 244, 255, true);
                     space(7);
@@ -2017,12 +2017,14 @@ void adminDashboard(int id,string name ,string username, string department, stri
         }
 
         else if(exit_key(choice) || back_key(choice)) {
+
+            // Logout Animation
             clearScreen();
 
             set_cursor(0, 8);
             print_gradient(line_str(' '), 244, 255, true);
             space(2);
-            print("         Logging out           ", 0, {Color::bg_light_cyan, Color::black});
+            print("         Logging out           ", 0, {Color::bg_white, Color::black});
             space(2);
             print_gradient(line_str(' '), 244, 255, true);
             space(7);
@@ -2031,7 +2033,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
             set_cursor(0, 8);
             print_gradient(line_str(' '), 244, 255, true);
             space(2);
-            print("         Logging out .         ", 0, {Color::bg_light_cyan, Color::black}); 
+            print("         Logging out .         ", 0, {Color::bg_white, Color::black}); 
             space(2);
             print_gradient(line_str(' '), 244, 255, true);
             space(7);
@@ -2040,7 +2042,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
             set_cursor(0, 8);
             print_gradient(line_str(' '), 244, 255, true);
             space(2);
-            print("         Logging out . .       ", 0, {Color::bg_light_cyan, Color::black});
+            print("         Logging out . .       ", 0, {Color::bg_white, Color::black});
             space(2);
             print_gradient(line_str(' '), 244, 255, true);
             space(7);
@@ -2049,7 +2051,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
             set_cursor(0, 8); 
             print_gradient(line_str(' '), 244, 255, true);
             space(2);
-            print("         Logging out . . .     ", 0, {Color::bg_light_cyan, Color::black});
+            print("         Logging out . . .     ", 0, {Color::bg_white, Color::black});
             space(2);
             print_gradient(line_str(' '), 244, 255, true);
             space(7);
@@ -2079,108 +2081,388 @@ void adminDashboard(int id,string name ,string username, string department, stri
     }
     while(!exit_key(choice) || !back_key(choice));
     return;
-
 }
 
-void userDashboard(int id, string name ,string username, string department, string userAccess ,string password){
-	 	
-		clearScreen();
-		int idToBorrow;
-		int quantity;
-		int choice;
-		int idToCancel;
-		int cancelationChoice ;
-		int action;
-		
+void userDashboard(int id, string name, string username, string department, string userAccess, string password) {
+    clearScreen();
+    string choice;
+    int idToCancel;
+    string date = getCurrentDate();
 
-		string date = getCurrentDate();
+    do {
+        clearScreen();
+
+        print_gradient(line_str('='), 203, 207);
+
+        print_triple_text("Name: " + name + "(" + username + ")", "Access: " + userAccess, "Department: " + department, 2);
+ 
+        print_gradient(line_str('='), 203, 207);
         
-        do {
-            cout << "Login successful! Welcome, " << name << " (" << username << ").\n";
-            cout << "Department: " << department << " Access: "<< userAccess;
-            cout << "\nOptions after login:\n";
-            cout << "1. Show all Items available\n";
-            cout << "2. Show Pending Request Item\n";
-            cout << "3. Show Borrowed Item\n";
-            cout << "4. Show Cancelled Items\n";
-            cout << "5. Settings\n";
-            cout << "0. Logout\n";
-            cout << "Enter your choice: ";
-            cin >> choice;
+        space(2);
+        print_gradient("USER DASHBOARD", 221, 223);
+        space(2);
 
-            switch (choice) {
-                case 1:
-                    readItems();
-                    cout << "Enter ID to request: ";
-                    cin >> idToBorrow;
-                    cout << "Enter Quantity: ";
-                    cin >> quantity;
-                    requestItems(idToBorrow,quantity,name,id,date);
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    break;
-                case 2:
-                    readMyRequest(id);
-                    cout << "1 - Cancel Request , 0 to Return\nAction: ";
-                    cin >> cancelationChoice;
-                    
-                    if(cancelationChoice == 1){
-                    	cout << "Enter Req. ID to cancel: ";
-                    	cin >> idToCancel;
-                    	cancelItems(idToCancel);
-                    	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    	break;
-					}else if(cancelationChoice == 2){
-						clearScreen();
-						return;
-					}else{
-						break;
-					}
-                    
-                case 3:
-                	readMyBorrow(id);
-                	break;
-                case 4:
-                    clearScreen();
-                    readMyCancelled(id);
-                    break;
-                case 5:
-                	clearScreen();
-                	cout << "1. Change password\n0. back\nAction: ";
-                	cin >>action;
-                	if(action == 1){
-                		clearScreen();
-                		cin.ignore();
-                		string currentPass, newPass, confirmPass;
-                		cout << "Enter current Password: ";
-                		getline(cin, currentPass);
-                		cout << "Enter new Password: ";
-                		getline(cin,newPass);
-                		cout << "Confirm Password: ";
-                		getline(cin,confirmPass);
-                		cin.ignore();
-                		if(currentPass == password){
-							if(newPass == confirmPass){
-	                			changePass(id,confirmPass);
-	                			break;
-							}else{
-								cout << "Passwords not Match\n";
-								break;
-							}
-						}else{
-							cout<< "Password do not match in our Database\n";
-						}
-					}else if(action == 0){
-						break;
-					}else{
-						break;
-					}
-                case 0:
-                    clearScreen();
-                    break;
-                default:
-                    cout << "Invalid choice. Please try again.\n";
+        print_triple_input_box("Show Items", "My Requests", "My Borrows", 20, 3, 1, Color::light_yellow);
+        space();
+        print_triple_input_box("My Cancellations", "Account Settings", "Back", 20, 3, 1, Color::light_yellow);
+        space(2);
+        print_gradient(line_str('='), 203, 207);
+        space(2);
+        
+        print_input_box(20, 0, Config::color_theme, "command", false);
+        set_cursor(31, 16);
+        
+        getline(cin, choice);
+
+        if(show_items_key(choice)) {
+            clearScreen();
+            bool refetch = false;
+
+            vector<Item> items;
+            ifstream file("item.txt");
+            Item item;
+
+            // Read all items into vector
+            while (file >> item.id >> item.name >> item.quantity) {
+                items.push_back(item);
             }
-        } while (choice != 0);
+            file.close();
+
+            const int ITEMS_PER_PAGE = 7;
+            int currentPage = 0;
+            int totalPages = (items.size() + ITEMS_PER_PAGE - 1) / ITEMS_PER_PAGE;
+            string command;
+
+            do {
+
+                if(refetch){
+                    items.clear();
+
+                    ifstream file("item.txt");
+
+                    // Read all items into vector
+                    while (file >> item.id >> item.name >> item.quantity) {
+                        items.push_back(item);
+                    }
+                    file.close();
+
+                    refetch = false;
+                }
+
+                clearScreen();
+                cout << " <<" << string(term_width * 0.40, ' ') <<" All Items " << string(term_width * 0.38, ' ') << " >>\n";
+                print_gradient(line_str('_'), 35, 40);
+
+                // Display items for current page
+                int start = currentPage * ITEMS_PER_PAGE;
+                int end = min(start + ITEMS_PER_PAGE, (int)items.size());
+
+                for (int i = start; i < end; i++) {
+                    cout << "\t\t";
+
+                    setColor(11); // Cyan for ID
+                    cout << left << setw(20) << ("ID: " + to_string(items[i].id));
+
+                    setColor(14); // Yellow for Name
+                    cout << setw(30) << "Name: " + items[i].name;
+
+                    setColor(10); // Green for Quantity
+                    cout << setw(15) << ("Quantity: " + to_string(items[i].quantity));
+
+                    setColor(7);
+                    space();
+                    print_gradient(line_str('_'), 35, 40);
+
+                    Sleep(15);
+                }
+
+                space(2);
+                print("Command: ", -28);
+                
+                print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
+                cout << "\033[54D";
+                getline(cin, command);
+                if(exit_key(command) || back_key(command)) break;
+
+                // Handle navigation
+                if (right_key(command)) {
+                    if (currentPage < totalPages - 1) currentPage++;
+                    continue;
+                }
+                else if (db_right_key(command)) {
+                    currentPage = min(currentPage + 2, totalPages - 1);
+                    continue;
+                }
+                else if (tri_right_key(command)) {
+                    currentPage = totalPages - 1;
+                    continue;
+                }
+                else if (left_key(command)) {
+                    if (currentPage > 0) currentPage--;
+                    continue;
+                }
+                else if (db_left_key(command)) {
+                    currentPage = max(currentPage - 2, 0);
+                    continue;
+                }
+                else if (tri_left_key(command)) {
+                    currentPage = 0;
+                    continue;
+                }
+
+                if(convert_case(command, "lower").substr(0,6) == "borrow") {
+                    string idStr = command.substr(7);
+                    if(isdigit(idStr[0])) {
+                        int quantity;
+                        set_cursor(31, 17);
+                        cout << "\r";
+                        print("Quantity: ", -28);
+                        cout << "                  ";
+                        set_cursor(17, 17);
+                        cin >> quantity;
+
+                        requestItems(stoi(idStr), quantity, name, id, date);
+                        Sleep(3000);
+                        cin.ignore();
+                        continue;
+                    }
+                }
+
+                set_cursor(0, 17);
+                print("      Invalid Command      ", 0, {Color::bg_light_red, Color::black});
+                Sleep(2000);
+                continue;
+            }
+            while (!exit_key(command) && !back_key(command));
+            continue;
+        }
+
+        else if(my_requests_key(choice)) {
+            readMyRequest(id);
+            
+            space(2);
+            print("Cancel Request (1) or Return (0)?", 0);
+            space();
+            print_input_box(20, 0, Config::color_theme, "action", false);
+            
+            int cancelChoice;
+            set_cursor(31, 16);
+            cin >> cancelChoice;
+
+            if(cancelChoice == 1) {
+                clearScreen();
+                print_input_box(20, 0, Config::color_theme, "request id", false);
+                set_cursor(31, 8);
+                cin >> idToCancel;
+                cancelItems(idToCancel);
+            }
+            cin.ignore();
+            continue;
+        }
+
+        else if(my_borrows_key(choice)) {
+            readMyBorrow(id);
+            cin.ignore();
+            continue;
+        }
+
+        else if(my_cancellations_key(choice)) {
+            readMyCancelled(id);
+            cin.ignore(); 
+            continue;
+        }
+
+        else if(account_settings_key(choice)) {
+            do {
+                clearScreen();
+                
+                space(4);
+                line_title("Account Settings", '=', Color::light_cyan, Color::yellow);
+                space(2);
+
+                print_triple_input_box("Change Password", "Logout", "Back", 20, 3, 1, Color::light_yellow);
+                space(2);
+                print_line('=', Color::light_cyan);
+                space(4);
+                
+                print_input_box(20, 0, Config::color_theme, "command", false);
+                set_cursor(31, 16);
+                
+                string settingsChoice;
+                getline(cin, settingsChoice);
+
+                if(exit_key(settingsChoice) || back_key(settingsChoice)) break;
+
+                if(change_password_key(settingsChoice)) {
+                    clearScreen();
+                    
+                    space(2);
+                    line_title("Change Password", '=', Color::light_cyan, Color::yellow);
+                    space();
+                    
+                    print_input_box(20, 0, Color::white, "current password", false);
+                    space(2);
+                    print_input_box(20, 0, Color::white, "new password", false); 
+                    space(2);
+                    print_input_box(20, 0, Color::white, "confirm password", false);
+
+                    space(2);
+                    print_line('=', Color::light_cyan);
+                    space();
+
+                    set_cursor(31, 5);
+                    string currentPass;
+                    getline(cin, currentPass);
+                    if(exit_key(currentPass) || back_key(currentPass)) continue;
+
+                    set_cursor(31, 9);  
+                    string newPass;
+                    getline(cin, newPass);
+                    if(exit_key(newPass) || back_key(newPass)) continue;
+
+                    set_cursor(31, 13);
+                    string confirmPass;
+                    getline(cin, confirmPass);
+                    if(exit_key(confirmPass) || back_key(confirmPass)) continue;
+
+                    if(currentPass == password){
+                        if(newPass == confirmPass){
+                            changePass(id, confirmPass);
+                            set_cursor(0, 18);
+                            print("      Password Changed Successfully      ", 0, {Color::bg_light_green, Color::black});
+                            Sleep(2000);
+                        }
+                        else{
+                            set_cursor(0, 18);
+                            print("      Passwords Do Not Match      ", 0, {Color::bg_light_red, Color::black});
+                            Sleep(2000);
+                        }
+                    }
+                    else{
+                        set_cursor(0, 18);
+                        print("      Current Password Is Incorrect      ", 0, {Color::bg_light_red, Color::black});
+                        Sleep(2000);
+                    }
+                }
+                else if(logout_key(settingsChoice)) {
+                    // Logout Animation
+                    clearScreen();
+
+                    set_cursor(0, 8);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(2);
+                    print("         Logging out           ", 0, {Color::bg_white, Color::black});
+                    space(2);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(7);
+                    Sleep(800);
+                    
+                    set_cursor(0, 8);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(2);
+                    print("         Logging out .         ", 0, {Color::bg_white, Color::black}); 
+                    space(2);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(7);
+                    Sleep(800);
+                    
+                    set_cursor(0, 8);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(2);
+                    print("         Logging out . .       ", 0, {Color::bg_white, Color::black});
+                    space(2);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(7);
+                    Sleep(800);
+                    
+                    set_cursor(0, 8); 
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(2);
+                    print("         Logging out . . .     ", 0, {Color::bg_white, Color::black});
+                    space(2);
+                    print_gradient(line_str(' '), 244, 255, true);
+                    space(7);
+                    Sleep(800);
+                    
+                    set_cursor(0, 8);
+                    print_gradient(line_str(' '), 84, 87, true);
+                    space(2);
+                    print("      Successfully logged out!      ", 0, {Color::bg_bright_green, Color::black});
+                    space(2);
+                    print_gradient(line_str(' '), 84, 87, true);
+                    space(7);
+                    Sleep(3000);
+
+                    clearScreen();
+                    return;
+                }
+            
+            } while(true);
+
+            continue;
+        }
+
+        else if(exit_key(choice) || back_key(choice)) {
+            // Logout Animation
+            clearScreen();
+
+            set_cursor(0, 8);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(2);
+            print("         Logging out           ", 0, {Color::bg_white, Color::black});
+            space(2);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(7);
+            Sleep(800);
+            
+            set_cursor(0, 8);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(2);
+            print("         Logging out .         ", 0, {Color::bg_white, Color::black}); 
+            space(2);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(7);
+            Sleep(800);
+            
+            set_cursor(0, 8);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(2);
+            print("         Logging out . .       ", 0, {Color::bg_white, Color::black});
+            space(2);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(7);
+            Sleep(800);
+            
+            set_cursor(0, 8); 
+            print_gradient(line_str(' '), 244, 255, true);
+            space(2);
+            print("         Logging out . . .     ", 0, {Color::bg_white, Color::black});
+            space(2);
+            print_gradient(line_str(' '), 244, 255, true);
+            space(7);
+            Sleep(800);
+            
+            set_cursor(0, 8);
+            print_gradient(line_str(' '), 84, 87, true);
+            space(2);
+            print("      Successfully logged out!      ", 0, {Color::bg_bright_green, Color::black});
+            space(2);
+            print_gradient(line_str(' '), 84, 87, true);
+            space(7);
+            Sleep(3000);
+
+            clearScreen();
+            return;
+        }
+
+        else {
+            set_cursor(0, 17);
+            print("      Invalid Command      ", 0, {Color::bg_light_red, Color::black});
+            Sleep(2000);
+            continue;
+        }
+
+    } while(!exit_key(choice) && !back_key(choice));
 }
 
 
@@ -2190,7 +2472,8 @@ int main() {
     
     clearScreen();
 
-    adminDashboard(12, "Kc-Sean", "Sean-Brix", "IT-DEPT", "admin", "121802");
+    // adminDashboard(12, "Kc-Sean", "Sean-Brix", "IT-DEPT", "admin", "121802");
+	userDashboard(10 , "devacc", "devacc", "IT-Dept" , "user", "121802");
     
     string line_color = "\e[47m";
     
