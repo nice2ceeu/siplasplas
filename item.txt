@@ -1,4 +1,3 @@
-1 paper 18
 2 pencil 50
 3 monitor 8
 4 eraser 17
@@ -12,12 +11,8 @@
 12 Headphone 7
 13 Electric-Fan 87
 14 Rubiks 211
-15 Speaker 3
 16 Hair-Comb 25
 17 Eye-Glass 0
 18 Perfume 6
 19 Sunscreen 15
 20 Bag 4
-21 Notebook 26
-22 Mirror 3
-23 ring 5

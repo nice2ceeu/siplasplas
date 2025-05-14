@@ -99,7 +99,7 @@ void addUser(const User& user);
 void addItem(const Item&item);
 
 void readUsers(const string guide = "None");
-void readItems(const string guide = "None");
+void readItems(const bool isDelete = false);
 
 void readAllUserRequest();
 void readMyRequest(int id);
@@ -669,8 +669,9 @@ void readUsers(const string guide) {
 }
 
 //return all items
-void readItems(const string guide) {
+void readItems(const bool isDelete) {
     clearScreen();
+    bool refetch = false;
 
     vector<Item> items;
     ifstream file("item.txt");
@@ -688,6 +689,21 @@ void readItems(const string guide) {
     string command;
 
     do {
+
+        if(refetch){
+            items.clear();
+
+            ifstream file("item.txt");
+
+            // Read all items into vector
+            while (file >> item.id >> item.name >> item.quantity) {
+                items.push_back(item);
+            }
+            file.close();
+
+            refetch = false;
+        }
+
         clearScreen();
         cout << " <<" << string(term_width * 0.40, ' ') <<" All Items " << string(term_width * 0.38, ' ') << " >>\n";
         print_gradient(line_str('_'), 35, 40);
@@ -720,25 +736,43 @@ void readItems(const string guide) {
         print(Color::gray + "Page " + to_string(currentPage + 1) + " of " + to_string(totalPages) + Color::reset, 15);
         cout << "\033[54D";
         cin >> command;
+        if(exit_key(command) || back_key(command)) break;
 
         // Handle navigation
         if (right_key(command)) {
             if (currentPage < totalPages - 1) currentPage++;
+            continue;
         }
         else if (db_right_key(command)) {
             currentPage = min(currentPage + 2, totalPages - 1);
+            continue;
         }
         else if (tri_right_key(command)) {
             currentPage = totalPages - 1;
+            continue;
         }
         else if (left_key(command)) {
             if (currentPage > 0) currentPage--;
+            continue;
         }
         else if (db_left_key(command)) {
             currentPage = max(currentPage - 2, 0);
+            continue;
         }
         else if (tri_left_key(command)) {
             currentPage = 0;
+            continue;
+        }
+
+        if(isDelete && isdigit(command[0])){
+            deleteItem(stoi(command));
+            refetch = true;
+            continue;
+        }
+        else {
+            set_cursor(0, 17);
+            print("      Invalid Command      ", 0, {Color::bg_light_red, Color::black});
+            Sleep(2000);
         }
     }
     while (!exit_key(command) && !back_key(command));
@@ -1287,17 +1321,20 @@ void deleteUser(int idToDelete) {
 }
 //deleting item(admin side)
 void deleteItem(int idToDelete) {
-    clearScreen();
 
     ifstream inFile("item.txt");
     if (!inFile) {
-        cerr << "Error: Unable to open data.txt for reading.\n";
+        set_cursor(0, 17);
+        print("      Server Error: Unable to open data.txt for reading      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         return;
     }
 
     ofstream outFile("tempItem.txt");
     if (!outFile) {
-        cerr << "Error: Unable to open temp.txt for writing.\n";
+        set_cursor(0, 17);
+        print("      Server Error: Unable to open temp.txt for writing      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         inFile.close();
         return;
     }
@@ -1319,27 +1356,42 @@ void deleteItem(int idToDelete) {
 	ifstream check("item.txt");
 	check.close();
 	if (check.is_open()) {
-	    cout << "item.txt is still open somehow before remove().\n";
+        set_cursor(0, 17);
+        print("      item.txt is still open somehow before remove()      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
 	} else {
-	    cout << "item.txt appears to be closed.\n";
+        set_cursor(0, 17);
+        print("      item.txt appears to be closed      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
 	}
 	check.close();
 	
     if (found) {
     if (remove("item.txt") != 0) {
-        perror("Error deleting original data file");
+        set_cursor(0, 17);
+        print("      Error deleting original data file      \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         return;
     }
     if (rename("tempItem.txt", "item.txt") != 0) {
-        perror("Error renaming temp file to data.txt");
+        set_cursor(0, 17);
+        print("      Error renaming temp file to data.txt      ", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
         return;
     }
-    cout << "Item deleted successfully.\n";
+    set_cursor(0, 17);
+    print("                  Item deleted successfully                  ", 0, {Color::bg_green, Color::black});
+    Sleep(2000);
 }
 	 else {
-        cout << "Item not found.\n";
+        set_cursor(0, 17);
+        print("            Item not found            \n", 0, {Color::bg_light_red, Color::black});
+        Sleep(2000);
+
         if (remove("temp.txt") != 0) {
-            perror("Error deleting temporary file");
+            set_cursor(0, 17);
+            print("      Error deleting temporary file      \n", 0, {Color::bg_light_red, Color::black});
+            Sleep(2000);
         }
     }
 }
@@ -1765,11 +1817,7 @@ void adminDashboard(int id,string name ,string username, string department, stri
 
         else if(delete_items_key(choice)) {
 
-            clearScreen();
-            readItems();
-            cout << "Enter ID to delete Item: ";
-            cin >> deleteId;
-            deleteItem(deleteId);
+            readItems(true);
             continue;
 
         }
